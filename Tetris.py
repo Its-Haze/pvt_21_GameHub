@@ -1,7 +1,6 @@
 import pygame  # importera pygame packet
 from sys import exit  # importera function exit from modul sys
 
-
 # # # # Aktivera Pygame # # # #
 
 pygame.init()  # initiera pygame biblioteket
@@ -21,7 +20,7 @@ snail_surface = pygame.image.load('graphics/snail/snail1.png')  # Laddar in bild
 snail_x_pos = 600  # Startar dens x_position med 600
 
 # Player
-player_surf = pygame.image.load('graphics/Player/player_walk_1.png')   # Laddar in bilden player_walk_1.png
+player_surf = pygame.image.load('graphics/Player/player_walk_1.png')  # Laddar in bilden player_walk_1.png
 player_rect = player_surf.get_rect(midbottom=(100, 300))  # skapar rektangel som man kan styra
 
 # Font
@@ -31,7 +30,6 @@ test_font = pygame.font.Font('font/Pixeltype.ttf', 50)  # loading en font
 text_surface = test_font.render('Tetris', False, 'Black')  # Skapar text ["text", bool, "färg"]
 text_rectangle = text_surface.get_rect(midtop=(400, 50))  # Skapar rektangel som man kan styra
 
-
 while True:
     # Allt inuti denna while loopen uppdateras på skärmen varje sekund
 
@@ -39,6 +37,11 @@ while True:
         if event.type == pygame.QUIT:  # Om knappen [x] klickas så hör följande:
             pygame.quit()  # Stäng av pygame
             exit()  # Stäng ner hela python filen
+        if event.type == pygame.MOUSEMOTION:
+            print('mouse up')
+            if player_rect.collidepoint(event.pos):
+                print('collision')
+
 
     screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
 
