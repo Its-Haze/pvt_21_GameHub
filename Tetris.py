@@ -4,8 +4,8 @@ from sys import exit  # importera function exit from modul sys
 
 def display_score():
     """ visa score av användare"""
-    current_time = pygame.time.get_ticks() - start_time # score
-    score_surf = test_font.render(f'{current_time//1000}', False, (64, 64, 64)) # score font
+    current_time = pygame.time.get_ticks() - start_time  # score
+    score_surf = test_font.render(f'{current_time // 1000}', False, (64, 64, 64))  # score font
     score_rect = score_surf.get_rect(center=(600, 50))
     screen.blit(score_surf, score_rect)
 
@@ -15,8 +15,8 @@ def display_score():
 pygame.init()  # initiera pygame biblioteket
 screen = pygame.display.set_mode((800, 400))  # Skapa ett Pygame fönster att jobba i
 clock = pygame.time.Clock()  # Skapar en klocka från att pygame.init() kördes
-game_active = True # variabln för att kolla om game ska köra
-start_time = 0 # varibel att spara senast tiden
+game_active = True  # variabln för att kolla om game ska köra
+start_time = 0  # varibel att spara senast tiden
 # # # # Surface, Rektanglar & Fonts # # # #
 
 # Sky
@@ -29,12 +29,18 @@ ground_surface = pygame.image.load('graphics/ground.png')  # Laddar in bilden gr
 snail_surface = pygame.image.load('graphics/snail/snail1.png')  # Laddar in bilden snail1.png
 snail_rect = snail_surface.get_rect(midbottom=(600, 300))
 
-#snail_x_pos = 600  # Startar dens x_position med 600
+# snail_x_pos = 600  # Startar dens x_position med 600
 
 # Player
 player_surf = pygame.image.load('graphics/Player/player_walk_1.png')  # Laddar in bilden player_walk_1.png
 player_rect = player_surf.get_rect(midbottom=(100, 300))  # skapar rektangel som man kan styra
-player_gravity = 0 # variabln för att kontrolera hur hög player ska hoppa
+player_gravity = 0  # variabln för att kontrolera hur hög player ska hoppa
+player_rotate = 0
+
+# Intro screen
+player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
+# Vi skapar en rektangel och centrerar den.
+
 
 # Font
 test_font = pygame.font.Font('font/Pixeltype.ttf', 50)  # loading en font
@@ -51,17 +57,17 @@ while True:
             pygame.quit()  # Stäng av pygame
             exit()  # Stäng ner hela python filen
         if game_active:
-            if event.type == pygame.MOUSEBUTTONDOWN: # hoppa med click från muss
+            if event.type == pygame.MOUSEBUTTONDOWN:  # hoppa med click från muss
                 if player_rect.collidepoint(event.pos):
-                    player_gravity = -20 # hoppa upp 20 från player står
+                    player_gravity = -20  # hoppa upp 20 från player står
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and player_rect.bottom >= 300: # hoppa med mellandslag,
-                    player_gravity = -20 #hoppa upp 20 från player står
+                if event.key == pygame.K_SPACE and player_rect.bottom >= 300:  # hoppa med mellandslag,
+                    player_gravity = -20  # hoppa upp 20 från player står
         else:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: # slå på mellanslag för att starta om game
-                game_active = True # kör game igen
-                snail_rect.left = 800 # initerra igen snigel plats
-                start_time = pygame.time.get_ticks() # spara tiden av sista gång
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
+                game_active = True  # kör game igen
+                snail_rect.left = 800  # initerra igen snigel plats
+                start_time = pygame.time.get_ticks()  # spara tiden av sista gång
 
     if game_active:
         screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
@@ -78,14 +84,18 @@ while True:
         # player
         player_gravity += 1
         player_rect.y += player_gravity
-        if player_rect.bottom >= 300: #efter player hoppade och trilla ned, vi kontrolerar om att stå på ground surface
+        if player_rect.bottom >= 300:  # efter player hoppade och trilla ned, vi kontrolerar om att stå på ground surface
             player_rect.bottom = 300
         screen.blit(player_surf, player_rect)  # Sätter spelaren på skärmen med positionen av player_rect
 
-        if snail_rect.colliderect(player_rect):# om player träffar snail
-            game_active = False # stop game
+        if snail_rect.colliderect(player_rect):  # om player träffar snail
+            game_active = False  # stop game
     else:
-        screen.fill('Yellow') # när game är stopp
+        screen.fill((94, 129, 162))
+        player_rotate -= 4
+        _player_stand = pygame.transform.rotozoom(player_stand, player_rotate,2)  # Tar en bild och gör den större eller rotera den.
+        player_stand_rect = _player_stand.get_rect(center=(400, 200))
+        screen.blit(_player_stand, player_stand_rect)
 
     pygame.display.update()  # uppdaterar skärmen [pygame window]
     clock.tick(60)  # hur snabb program kör [60 fps]
