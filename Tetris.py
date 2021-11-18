@@ -22,7 +22,7 @@ def display_pre_score(score):
 pygame.init()  # initiera pygame biblioteket
 screen = pygame.display.set_mode((800, 400))  # Skapa ett Pygame fönster att jobba i
 clock = pygame.time.Clock()  # Skapar en klocka från att pygame.init() kördes
-game_active = True  # variabln för att kolla om game ska köra
+game_active = False  # variabln för att kolla om game ska köra
 start_time = 0  # varibel att spara senast tiden
 # # # # Surface, Rektanglar & Fonts # # # #
 
@@ -50,6 +50,8 @@ player_rotate = 0
 # Intro screen
 player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
 # Vi skapar en rektangel och centrerar den.
+instructions_surf = test_font.render('Press space to play', False, 'Black')
+instructions_rect = instructions_surf.get_rect(center=(400, 350))
 
 
 
@@ -107,6 +109,7 @@ while True:
         player_stand_rect = _player_stand.get_rect(center=(400, 200))
         screen.blit(_player_stand, player_stand_rect)
         display_pre_score(pre_score)
+        screen.blit(instructions_surf, instructions_rect)
 
     pygame.display.update()  # uppdaterar skärmen [pygame window]
     clock.tick(60)  # hur snabb program kör [60 fps]
