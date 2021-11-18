@@ -5,7 +5,7 @@ from sys import exit  # importera function exit from modul sys
 def display_score():
     """ visa score av användare"""
     current_time = pygame.time.get_ticks() - start_time # score
-    score_surf = test_font.render(f'{current_time}', False, (64, 64, 64)) # score font
+    score_surf = test_font.render(f'{current_time//1000}', False, (64, 64, 64)) # score font
     score_rect = score_surf.get_rect(center=(600, 50))
     screen.blit(score_surf, score_rect)
 
