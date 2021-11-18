@@ -49,12 +49,12 @@ player_rotate = 0
 
 # Intro screen
 player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
+
+
+
+
+
 # Vi skapar en rektangel och centrerar den.
-instructions_surf = test_font.render('Press space to play', False, 'Black')
-instructions_rect = instructions_surf.get_rect(center=(400, 350))
-
-
-
 
 # Texter
 text_surface = test_font.render('Austranaut runner', False, 'Black')  # Skapar text ["text", bool, "färg"]
@@ -105,8 +105,11 @@ while True:
 
         if score == 0:  # Visar speltitel om score är noll
             screen.blit(text_surface, text_rectangle)
+            instructions_surf = test_font.render('Press space to play', False, 'Black')
         else:  # Om spelaren har spelat en omgång, visa score istället
             display_pre_score(score)
+            instructions_surf = test_font.render('Press space to play again', False, 'Black')
+        instructions_rect = instructions_surf.get_rect(center=(400, 350))
 
 
         # player_rotate -= 4
