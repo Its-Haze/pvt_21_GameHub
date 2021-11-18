@@ -5,8 +5,8 @@ from sys import exit  # importera function exit from modul sys
 def display_score():
     """ visa score av användare"""
     current_time = (pygame.time.get_ticks() - start_time)//1000  # score
-    score_surf = test_font.render(f'{current_time}', False, (64, 64, 64))  # score font
-    score_rect = score_surf.get_rect(center=(600, 50))
+    score_surf = test_font.render(f'Score: {current_time}', False, (64, 64, 64))  # score font
+    score_rect = score_surf.get_rect(center=(400, 50))
     screen.blit(score_surf, score_rect)
     return current_time
 
@@ -57,9 +57,9 @@ instructions_rect = instructions_surf.get_rect(center=(400, 350))
 
 
 # Texter
-text_surface = test_font.render('Tetris', False, 'Black')  # Skapar text ["text", bool, "färg"]
+text_surface = test_font.render('Austranaut runner', False, 'Black')  # Skapar text ["text", bool, "färg"]
 text_rectangle = text_surface.get_rect(midtop=(400, 50))  # Skapar rektangel som man kan styra
-pre_score = 0
+score = 0
 while True:
     # Allt inuti denna while loopen uppdateras på skärmen varje sekund
 
@@ -85,8 +85,7 @@ while True:
 
         screen.blit(ground_surface, (0, 300))  # sätter marken på skärmen  - Lager 2
 
-        screen.blit(text_surface, text_rectangle)  # Sätter texten på skärmen  - Lager 3
-        pre_score = display_score()
+        score = display_score()
         snail_rect.x -= 4  # uppdaterar snigelns x position med [-4] varje gång while loopen körs
         if snail_rect.right < 0:  # Kollar om snigelns x position är mindre än 0
             snail_rect.left = 800  # sätter dens x position till 800
@@ -103,12 +102,18 @@ while True:
             game_active = False  # stop game
     if not game_active:
         screen.fill((94, 129, 162))
+
+        if score == 0:  # Visar speltitel om score är noll
+            screen.blit(text_surface, text_rectangle)
+        else:  # Om spelaren har spelat en omgång, visa score istället
+            display_pre_score(score)
+
+
         # player_rotate -= 4
 
         _player_stand = pygame.transform.rotozoom(player_stand, player_rotate,2)  # Tar en bild och gör den större eller rotera den.
         player_stand_rect = _player_stand.get_rect(center=(400, 200))
         screen.blit(_player_stand, player_stand_rect)
-        display_pre_score(pre_score)
         screen.blit(instructions_surf, instructions_rect)
 
     pygame.display.update()  # uppdaterar skärmen [pygame window]
