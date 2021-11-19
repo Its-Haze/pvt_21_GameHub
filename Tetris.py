@@ -5,7 +5,7 @@ from sys import exit  # importera function exit from modul sys
 
 def display_score():
     """ visa score av användare"""
-    current_time = (pygame.time.get_ticks() - start_time)//1000  # score
+    current_time = (pygame.time.get_ticks() - start_time) // 1000  # score
     score_surf = test_font.render(f'Score: {current_time}', False, (64, 64, 64))  # score font
     score_rect = score_surf.get_rect(center=(400, 50))
     screen.blit(score_surf, score_rect)
@@ -24,9 +24,10 @@ def obstacle_movement(obstacle_list: list):
             obstacle_rect.x -= 5  # Flyttar varje obstacle 5 pixlar till vänster
             if obstacle_rect.bottom == 300:  # Om obstacle är 300 så vet vi att det är en snigel
                 screen.blit(snail_surface, obstacle_rect)  # blit snail_surface
-                print(obstacle_rect)
-                print(obstacle_list)
-        obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x > -100]  # Sparar bara obstacles om deras x värde är större än minus 100
+            else:
+                screen.blit(fly_surf, obstacle_rect)
+        obstacle_list = [obstacle for obstacle in obstacle_list if
+                         obstacle.x > -100]  # Sparar bara obstacles om deras x värde är större än minus 100
         return obstacle_list
     else:
         return []
@@ -49,7 +50,6 @@ pygame.time.set_timer(obstacle_timer, 1500)  # Vi bestämmer hur ofta pygame ska
 # Obstacles
 obstacles_list = []  # Vi skapar listan som våra obstacles kommer ligga i
 
-
 # Sky
 sky_surface = pygame.image.load('graphics/Sky.png')  # Laddar in bilden Sky.png
 
@@ -61,9 +61,12 @@ test_font = pygame.font.Font('font/Pixeltype.ttf', 50)  # loading en font
 
 # Snail
 snail_surface = pygame.image.load('graphics/snail/snail1.png')  # Laddar in bilden snail1.png
-#snail_rect = snail_surface.get_rect(midbottom=(600, 300))
+# snail_rect = snail_surface.get_rect(midbottom=(600, 300))
 
 # snail_x_pos = 600  # Startar dens x_position med 600
+
+# Fly
+fly_surf = pygame.image.load('graphics/fly/Fly1.png').convert_alpha()
 
 # Player
 player_surf = pygame.image.load('graphics/Player/player_walk_1.png')  # Laddar in bilden player_walk_1.png
@@ -73,10 +76,6 @@ player_rotate = 0
 
 # Intro screen
 player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
-
-
-
-
 
 # Vi skapar en rektangel och centrerar den.
 
@@ -101,12 +100,15 @@ while True:
 
             if event.type == obstacle_timer:
                 print('Våran obstacle timer funkar!')
-                obstacles_list.append(snail_surface.get_rect(midbottom=(randint(800, 1100), 300)))  # Lägger till en snigel i listan av obstacles
+                if randint(0, 1):
+                    obstacles_list.append(snail_surface.get_rect(midbottom=(randint(800, 1100), 300)))  # Lägger till en snigel i listan av obstacles
+                else:
+                    obstacles_list.append(fly_surf.get_rect(midbottom=(randint(800, 1100), 210)))
 
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
                 game_active = True  # kör game igen
-                #snail_rect.left = 800  # initerra igen snigel plats
+                # snail_rect.left = 800  # initerra igen snigel plats
                 start_time = pygame.time.get_ticks()  # spara tiden av sista gång
 
     if game_active:
@@ -120,7 +122,7 @@ while True:
         #     snail_rect.left = 800  # sätter dens x position till 800
 
         obstacles_list = obstacle_movement(obstacles_list)
-        #screen.blit(snail_surface, snail_rect)  # sätter snigeln på skärmen med positionen av snail_rect
+        # screen.blit(snail_surface, snail_rect)  # sätter snigeln på skärmen med positionen av snail_rect
         # player
         player_gravity += 1
         player_rect.y += player_gravity
@@ -128,7 +130,7 @@ while True:
             player_rect.bottom = 300
         screen.blit(player_surf, player_rect)  # Sätter spelaren på skärmen med positionen av player_rect
 
-        #if snail_rect.colliderect(player_rect):  # om player träffar snail
+        # if snail_rect.colliderect(player_rect):  # om player träffar snail
         #    game_active = False  # stop game
     if not game_active:
         screen.fill((94, 129, 162))
@@ -141,10 +143,10 @@ while True:
             instructions_surf = test_font.render('Press space to play again', False, 'Black')
         instructions_rect = instructions_surf.get_rect(center=(400, 350))
 
-
         player_rotate -= 4
 
-        _player_stand = pygame.transform.rotozoom(player_stand, player_rotate,2)  # Tar en bild och gör den större eller rotera den.
+        _player_stand = pygame.transform.rotozoom(player_stand, player_rotate,
+                                                  2)  # Tar en bild och gör den större eller rotera den.
         player_stand_rect = _player_stand.get_rect(center=(400, 200))
         screen.blit(_player_stand, player_stand_rect)
         screen.blit(instructions_surf, instructions_rect)
