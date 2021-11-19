@@ -1,155 +1,218 @@
-import pygame  # importera pygame packet
-from random import randint
-from sys import exit  # importera function exit from modul sys
+import pygame   # https://levelup.gitconnected.com/writing-tetris-in-python-2a16bddb5318
+import random
+
+colors = [
+    (0, 0, 0),
+    (120, 37, 179),
+    (100, 179, 179),
+    (80, 34, 22),
+    (80, 134, 22),
+    (180, 34, 22),
+    (180, 34, 122),
+]
 
 
-def display_score():
-    """ visa score av användare"""
-    current_time = (pygame.time.get_ticks() - start_time) // 1000  # score
-    score_surf = test_font.render(f'Score: {current_time}', False, (64, 64, 64))  # score font
-    score_rect = score_surf.get_rect(center=(400, 50))
-    screen.blit(score_surf, score_rect)
-    return current_time
+class Figure:
+    x = 0
+    y = 0
+
+    figures = [
+        [[1, 5, 9, 13], [4, 5, 6, 7]],
+        [[4, 5, 9, 10], [2, 6, 5, 9]],
+        [[6, 7, 9, 10], [1, 5, 6, 10]],
+        [[1, 2, 5, 9], [0, 4, 5, 6], [1, 5, 9, 8], [4, 5, 6, 10]],
+        [[1, 2, 6, 10], [5, 6, 7, 9], [2, 6, 10, 11], [3, 5, 6, 7]],
+        [[1, 4, 5, 6], [1, 4, 5, 9], [4, 5, 6, 9], [1, 5, 6, 9]],
+        [[1, 2, 5, 6]],
+    ]
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.type = random.randint(0, len(self.figures) - 1)
+        self.color = random.randint(1, len(colors) - 1)
+        self.rotation = 0
+
+    def image(self):
+        return self.figures[self.type][self.rotation]
+
+    def rotate(self):
+        self.rotation = (self.rotation + 1) % len(self.figures[self.type])
 
 
-def display_pre_score(score):
-    pre_score_surf = test_font.render(f'Score: {score}', False, 'Grey')
-    pre_score_rect = pre_score_surf.get_rect(center=(400, 50))
-    screen.blit(pre_score_surf, pre_score_rect)
+class Tetris:
+    level = 2
+    score = 0
+    state = "start"
+    field = []
+    height = 0
+    width = 0
+    x = 100
+    y = 60
+    zoom = 20
+    figure = None
+
+    def __init__(self, height, width):
+        self.height = height
+        self.width = width
+        self.field = []
+        self.score = 0
+        self.state = "start"
+        for i in range(height):
+            new_line = []
+            for j in range(width):
+                new_line.append(0)
+            self.field.append(new_line)
+
+    def new_figure(self):
+        self.figure = Figure(3, 0)
+
+    def intersects(self):
+        intersection = False
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in self.figure.image():
+                    if i + self.figure.y > self.height - 1 or \
+                            j + self.figure.x > self.width - 1 or \
+                            j + self.figure.x < 0 or \
+                            self.field[i + self.figure.y][j + self.figure.x] > 0:
+                        intersection = True
+        return intersection
+
+    def break_lines(self):
+        lines = 0
+        for i in range(1, self.height):
+            zeros = 0
+            for j in range(self.width):
+                if self.field[i][j] == 0:
+                    zeros += 1
+            if zeros == 0:
+                lines += 1
+                for i1 in range(i, 1, -1):
+                    for j in range(self.width):
+                        self.field[i1][j] = self.field[i1 - 1][j]
+        self.score += lines ** 2
+
+    def go_space(self):
+        while not self.intersects():
+            self.figure.y += 1
+        self.figure.y -= 1
+        self.freeze()
+
+    def go_down(self):
+        self.figure.y += 1
+        if self.intersects():
+            self.figure.y -= 1
+            self.freeze()
+
+    def freeze(self):
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in self.figure.image():
+                    self.field[i + self.figure.y][j + self.figure.x] = self.figure.color
+        self.break_lines()
+        self.new_figure()
+        if self.intersects():
+            self.state = "gameover"
+
+    def go_side(self, dx):
+        old_x = self.figure.x
+        self.figure.x += dx
+        if self.intersects():
+            self.figure.x = old_x
+
+    def rotate(self):
+        old_rotation = self.figure.rotation
+        self.figure.rotate()
+        if self.intersects():
+            self.figure.rotation = old_rotation
 
 
-def obstacle_movement(obstacle_list: list):
-    if obstacle_list:  # Om listan inte är tom
-        for obstacle_rect in obstacle_list:
-            obstacle_rect.x -= 5  # Flyttar varje obstacle 5 pixlar till vänster
-            if obstacle_rect.bottom == 300:  # Om obstacle är 300 så vet vi att det är en snigel
-                screen.blit(snail_surface, obstacle_rect)  # blit snail_surface
-            else:
-                screen.blit(fly_surf, obstacle_rect)
-        obstacle_list = [obstacle for obstacle in obstacle_list if
-                         obstacle.x > -100]  # Sparar bara obstacles om deras x värde är större än minus 100
-        return obstacle_list
-    else:
-        return []
+# Initialize the game engine
+pygame.init()
 
+# Define some colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (128, 128, 128)
 
-def collision(player, obstacles):
-    """ return False om player träffar obstacle, annars  return True"""
-    if obstacles:
-        for obstacle in obstacles:
-            if player.colliderect(obstacle): # om player träffa obstacle
-                return False
-    return True
+size = (400, 500)
+screen = pygame.display.set_mode(size)
 
-# # # # Aktivera Pygame # # # #
+pygame.display.set_caption("Tetris")
 
-pygame.init()  # initiera pygame biblioteket
-screen = pygame.display.set_mode((800, 400))  # Skapa ett Pygame fönster att jobba i
-clock = pygame.time.Clock()  # Skapar en klocka från att pygame.init() kördes
-game_active = False  # variabln för att kolla om game ska köra
-start_time = 0  # varibel att spara senast tiden
-# # # # Surface, Rektanglar & Fonts # # # #
+# Loop until the user clicks the close button.
+done = False
+clock = pygame.time.Clock()
+fps = 25
+game = Tetris(20, 10)
+counter = 0
 
-# Timers för event
-obstacle_timer = pygame.USEREVENT + 1  # Vi skapar en timer genom att använda pygame's USEREVENT.
-# Vi plussar på 1 för att inte använda pygames reserverade ID för USEREVENT.
-pygame.time.set_timer(obstacle_timer, 1500)  # Vi bestämmer hur ofta pygame ska köra vårat event (1.5 sekunder)
+pressing_down = False
 
-# Obstacles
-obstacles_list = []  # Vi skapar listan som våra obstacles kommer ligga i
+while not done:
+    if game.figure is None:
+        game.new_figure()
+    counter += 1
+    if counter > 100000:
+        counter = 0
 
-# Sky
-sky_surface = pygame.image.load('graphics/Sky.png')  # Laddar in bilden Sky.png
-
-# Ground
-ground_surface = pygame.image.load('graphics/ground.png')  # Laddar in bilden ground.png
-
-# Font
-test_font = pygame.font.Font('font/Pixeltype.ttf', 50)  # loading en font
-
-# Snail
-snail_surface = pygame.image.load('graphics/snail/snail1.png')  # Laddar in bilden snail1.png
-
-
-# Fly
-fly_surf = pygame.image.load('graphics/fly/Fly1.png').convert_alpha()
-
-# Player
-player_surf = pygame.image.load('graphics/Player/player_walk_1.png')  # Laddar in bilden player_walk_1.png
-player_rect = player_surf.get_rect(midbottom=(100, 300))  # skapar rektangel som man kan styra
-player_gravity = 0  # variabln för att kontrolera hur hög player ska hoppa
-player_rotate = 0
-
-# Intro screen
-player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
-
-# Vi skapar en rektangel och centrerar den.
-
-# Texter
-text_surface = test_font.render('Austranaut runner', False, 'Black')  # Skapar text ["text", bool, "färg"]
-text_rectangle = text_surface.get_rect(midtop=(400, 50))  # Skapar rektangel som man kan styra
-score = 0
-while True:
-    # Allt inuti denna while loopen uppdateras på skärmen varje sekund
+    if counter % (fps // game.level // 2) == 0 or pressing_down:
+        if game.state == "start":
+            game.go_down()
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:  # Om knappen [x] klickas så hör följande:
-            pygame.quit()  # Stäng av pygame
-            exit()  # Stäng ner hela python filen
-        if game_active:
-            if event.type == pygame.MOUSEBUTTONDOWN:  # hoppa med click från muss
-                if player_rect.collidepoint(event.pos):
-                    player_gravity = -20  # hoppa upp 20 från player står
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and player_rect.bottom >= 300:  # hoppa med mellandslag,
-                    player_gravity = -20  # hoppa upp 20 från player står
+        if event.type == pygame.QUIT:
+            done = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                game.rotate()
+            if event.key == pygame.K_DOWN:
+                pressing_down = True
+            if event.key == pygame.K_LEFT:
+                game.go_side(-1)
+            if event.key == pygame.K_RIGHT:
+                game.go_side(1)
+            if event.key == pygame.K_SPACE:
+                game.go_space()
+            if event.key == pygame.K_ESCAPE:
+                game.__init__(20, 10)
 
-            if event.type == obstacle_timer:
-                print('Våran obstacle timer funkar!')
-                if randint(0, 1):
-                    obstacles_list.append(snail_surface.get_rect(midbottom=(randint(800, 1100), 300)))  # Lägger till en snigel i listan av obstacles
-                else:
-                    obstacles_list.append(fly_surf.get_rect(midbottom=(randint(800, 1100), 210)))
+    if event.type == pygame.KEYUP:
+            if event.key == pygame.K_DOWN:
+                pressing_down = False
 
-        else:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
-                game_active = True  # kör game igen
-                start_time = pygame.time.get_ticks()  # spara tiden av sista gång
+    screen.fill(WHITE)
 
-    if game_active:
-        screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
+    for i in range(game.height):
+        for j in range(game.width):
+            pygame.draw.rect(screen, GRAY, [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom], 1)
+            if game.field[i][j] > 0:
+                pygame.draw.rect(screen, colors[game.field[i][j]],
+                                 [game.x + game.zoom * j + 1, game.y + game.zoom * i + 1, game.zoom - 2, game.zoom - 1])
 
-        screen.blit(ground_surface, (0, 300))  # sätter marken på skärmen  - Lager 2
+    if game.figure is not None:
+        for i in range(4):
+            for j in range(4):
+                p = i * 4 + j
+                if p in game.figure.image():
+                    pygame.draw.rect(screen, colors[game.figure.color],
+                                     [game.x + game.zoom * (j + game.figure.x) + 1,
+                                      game.y + game.zoom * (i + game.figure.y) + 1,
+                                      game.zoom - 2, game.zoom - 2])
 
-        score = display_score()
-        obstacles_list = obstacle_movement(obstacles_list) # anropa function obstacle_movement
-        game_active = collision(player_rect, obstacles_list) # anropa function collision
-        # player
-        player_gravity += 1
-        player_rect.y += player_gravity
-        if player_rect.bottom >= 300:  # efter player hoppade och trilla ned, vi kontrolerar om att stå på ground surface
-            player_rect.bottom = 300
-        screen.blit(player_surf, player_rect)  # Sätter spelaren på skärmen med positionen av player_rect
+    font = pygame.font.SysFont('Calibri', 25, True, False)
+    font1 = pygame.font.SysFont('Calibri', 65, True, False)
+    text = font.render("Score: " + str(game.score), True, BLACK)
+    text_game_over = font1.render("Game Over", True, (255, 125, 0))
+    text_game_over1 = font1.render("Press ESC", True, (255, 215, 0))
 
-    if not game_active:
-        screen.fill((94, 129, 162))
+    screen.blit(text, [0, 0])
+    if game.state == "gameover":
+        screen.blit(text_game_over, [20, 200])
+        screen.blit(text_game_over1, [25, 265])
 
-        if score == 0:  # Visar speltitel om score är noll
-            screen.blit(text_surface, text_rectangle)
-            instructions_surf = test_font.render('Press space to play', False, 'Black')
-        else:  # Om spelaren har spelat en omgång, visa score istället
-            display_pre_score(score)
-            instructions_surf = test_font.render('Press space to play again', False, 'Black')
-        instructions_rect = instructions_surf.get_rect(center=(400, 350))
+    pygame.display.flip()
+    clock.tick(fps)
 
-        player_rotate -= 4
-
-        _player_stand = pygame.transform.rotozoom(player_stand, player_rotate,
-                                                  2)  # Tar en bild och gör den större eller rotera den.
-        player_stand_rect = _player_stand.get_rect(center=(400, 200))
-        screen.blit(_player_stand, player_stand_rect)
-        screen.blit(instructions_surf, instructions_rect)
-        obstacles_list.clear()  # Tömmer listan när spelaren har förlorat
-
-    pygame.display.update()  # uppdaterar skärmen [pygame window]
-    clock.tick(60)  # hur snabb program kör [60 fps]
+pygame.quit()
