@@ -61,9 +61,7 @@ test_font = pygame.font.Font('font/Pixeltype.ttf', 50)  # loading en font
 
 # Snail
 snail_surface = pygame.image.load('graphics/snail/snail1.png')  # Laddar in bilden snail1.png
-# snail_rect = snail_surface.get_rect(midbottom=(600, 300))
 
-# snail_x_pos = 600  # Startar dens x_position med 600
 
 # Fly
 fly_surf = pygame.image.load('graphics/fly/Fly1.png').convert_alpha()
@@ -108,7 +106,6 @@ while True:
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
                 game_active = True  # kör game igen
-                # snail_rect.left = 800  # initerra igen snigel plats
                 start_time = pygame.time.get_ticks()  # spara tiden av sista gång
 
     if game_active:
@@ -117,12 +114,8 @@ while True:
         screen.blit(ground_surface, (0, 300))  # sätter marken på skärmen  - Lager 2
 
         score = display_score()
-        # snail_rect.x -= 4  # uppdaterar snigelns x position med [-4] varje gång while loopen körs
-        # if snail_rect.right < 0:  # Kollar om snigelns x position är mindre än 0
-        #     snail_rect.left = 800  # sätter dens x position till 800
-
         obstacles_list = obstacle_movement(obstacles_list)
-        # screen.blit(snail_surface, snail_rect)  # sätter snigeln på skärmen med positionen av snail_rect
+
         # player
         player_gravity += 1
         player_rect.y += player_gravity
@@ -130,8 +123,6 @@ while True:
             player_rect.bottom = 300
         screen.blit(player_surf, player_rect)  # Sätter spelaren på skärmen med positionen av player_rect
 
-        # if snail_rect.colliderect(player_rect):  # om player träffar snail
-        #    game_active = False  # stop game
     if not game_active:
         screen.fill((94, 129, 162))
 
