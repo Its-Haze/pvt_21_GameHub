@@ -33,6 +33,14 @@ def obstacle_movement(obstacle_list: list):
         return []
 
 
+def collision(player, obstacles):
+    """ return False om player träffar obstacle, annars  return True"""
+    if obstacles:
+        for obstacle in obstacles:
+            if player.colliderect(obstacle): # om player träffa obstacle
+                return False
+    return True
+
 # # # # Aktivera Pygame # # # #
 
 pygame.init()  # initiera pygame biblioteket
@@ -114,8 +122,8 @@ while True:
         screen.blit(ground_surface, (0, 300))  # sätter marken på skärmen  - Lager 2
 
         score = display_score()
-        obstacles_list = obstacle_movement(obstacles_list)
-
+        obstacles_list = obstacle_movement(obstacles_list) # anropa function obstacle_movement
+        game_active = collision(player_rect, obstacles_list) # anropa function collision
         # player
         player_gravity += 1
         player_rect.y += player_gravity
