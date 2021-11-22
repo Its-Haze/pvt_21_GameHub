@@ -41,6 +41,17 @@ def collision(player, obstacles):
                 return False
     return True
 
+
+def player_animation(pl_surf, index):
+    if player_rect.bottom < 300:
+        pl_surf = player_jump
+    else:
+        index += 0.1
+        if index > len(player_walk):
+            index = 0
+        pl_surf = player_walk[int(index)]
+    return pl_surf, index
+
 # # # # Aktivera Pygame # # # #
 
 pygame.init()  # initiera pygame biblioteket
@@ -75,7 +86,13 @@ snail_surface = pygame.image.load('graphics/snail/snail1.png')  # Laddar in bild
 fly_surf = pygame.image.load('graphics/fly/Fly1.png').convert_alpha()
 
 # Player
-player_surf = pygame.image.load('graphics/Player/player_walk_1.png')  # Laddar in bilden player_walk_1.png
+player_walk1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
+player_walk2 = pygame.image.load('graphics/Player/player_walk_2.png').convert_alpha()
+player_jump = pygame.image.load('graphics/Player/jump.png').convert_alpha()
+player_index = 0
+player_walk = [player_walk1, player_walk2]
+
+player_surf = player_walk[player_index]  # Laddar in bilden player_walk_1.png
 player_rect = player_surf.get_rect(midbottom=(100, 300))  # skapar rektangel som man kan styra
 player_gravity = 0  # variabln för att kontrolera hur hög player ska hoppa
 player_rotate = 0
@@ -129,6 +146,7 @@ while True:
         player_rect.y += player_gravity
         if player_rect.bottom >= 300:  # efter player hoppade och trilla ned, vi kontrolerar om att stå på ground surface
             player_rect.bottom = 300
+        player_surf, player_index = player_animation(player_surf, player_index)
         screen.blit(player_surf, player_rect)  # Sätter spelaren på skärmen med positionen av player_rect
 
     if not game_active:
