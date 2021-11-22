@@ -42,9 +42,8 @@ def collisions(player, obstacle_list):  # Player surf, listan med alla mobs på 
     return True  # returnera True och spara detta värdet i game_active sen
 
 
-def player_animation():
+def player_animation(player_surf, player_index):
     """ Play walking animation if player is on floor, or jump animation if not on floor"""
-    global player_surf, player_index
 
     if player_rect.bottom < 300:  # om nedre rektanglen är på marken
         player_surf = player_jump  # om spelaren inte är på marken så ska player_jump animationen visas
@@ -57,6 +56,7 @@ def player_animation():
             player_surf = player_walk[int(player_index)]  # bilden för gubben blir en surface från listan med indexet player_index
             # walk animation
         else: player_surf = player_walk[0]  # om spelaren inte rör sig så ska bara indexet 0 visas
+    return player_surf, player_index
 
 
 # # # # Aktivera Pygame # # # #
@@ -95,6 +95,7 @@ player_walk_2 = pygame.image.load('graphics/Player/player_walk_2.png').convert_a
 player_walk = [player_walk_1, player_walk_2]  # lista av alla bilder vi vill animera
 
 player_index = 0  # indexet byter mellan walk_1 och walk_2 så den byter mellan 0 & 1 konstant
+
 player_jump = pygame.image.load('graphics/Player/jump.png').convert_alpha()  # Laddar in bilden jump.png
 player_surf = player_walk[player_index]  # Player_surf ändras hela tiden baserat på vilket index vi ligger i
 
@@ -182,7 +183,7 @@ while True:
         player_rect.y += player_gravity  # sätter y värdet till det som gravity är
         if player_rect.bottom >= 300:  # efter player hoppade och trilla ned, vi kontrollerar om att stå på ground surface
             player_rect.bottom = 300
-        player_animation()  # byter walking / jumping bild på player surf innan den visas på skärmen
+        player_surf, player_index = player_animation(player_surf, player_index)  # byter walking / jumping bild på player surf innan den visas på skärmen
         screen.blit(player_surf, player_rect)  # Sätter spelaren på skärmen med positionen av player_rect
 
         # player not walking out of frame
