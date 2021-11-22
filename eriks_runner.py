@@ -46,17 +46,17 @@ def player_animation():
     """ Play walking animation if player is on floor, or jump animation if not on floor"""
     global player_surf, player_index
 
-    if player_rect.bottom < 300:
+    if player_rect.bottom < 300:  # om nedre rektanglen är på marken
         player_surf = player_jump  # om spelaren inte är på marken så ska player_jump animationen visas
 
     else:
-        if moving_right or moving_left:
-            player_index += 0.1
-            if player_index >= len(player_walk):
-                player_index = 0
-            player_surf = player_walk[int(player_index)]
+        if moving_right or moving_left:  # om spelaren rör sig höger eller vänster
+            player_index += 0.1  # öka med 0.1
+            if player_index >= len(player_walk):  # om indexet är högre/lika med player_walk listan (2)
+                player_index = 0  # sätt tillbaka variabeln till 0 om den gått till 2.0
+            player_surf = player_walk[int(player_index)]  # bilden för gubben blir en surface från listan med indexet player_index
             # walk animation
-        else: player_surf = player_walk[0]
+        else: player_surf = player_walk[0]  # om spelaren inte rör sig så ska bara indexet 0 visas
 
 
 # # # # Aktivera Pygame # # # #
