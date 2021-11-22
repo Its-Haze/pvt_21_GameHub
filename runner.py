@@ -66,6 +66,13 @@ obstacle_timer = pygame.USEREVENT + 1  # Vi skapar en timer genom att använda p
 # Vi plussar på 1 för att inte använda pygames reserverade ID för USEREVENT.
 pygame.time.set_timer(obstacle_timer, 1500)  # Vi bestämmer hur ofta pygame ska köra vårat event (1.5 sekunder)
 
+snail_timer = pygame.USEREVENT + 2  # Vi skapar en timer för att välja hur ofta bilden på snigeln skall bytas ut - detta skapar en animering
+pygame.time.set_timer(snail_timer, 500)
+
+fly_timer = pygame.USEREVENT + 3 # Vi skapar en timer för att animera flugan
+pygame.time.set_timer(fly_timer, 200)
+
+
 # Obstacles
 obstacles_list = []  # Vi skapar listan som våra obstacles kommer ligga i
 
@@ -79,11 +86,18 @@ ground_surface = pygame.image.load('graphics/ground.png')  # Laddar in bilden gr
 test_font = pygame.font.Font('font/Pixeltype.ttf', 50)  # loading en font
 
 # Snail
-snail_surface = pygame.image.load('graphics/snail/snail1.png')  # Laddar in bilden snail1.png
-
+snail_animation_1 = pygame.image.load('graphics/snail/snail1.png')  # Laddar in bilden snail1.png
+snail_animation_2 = pygame.image.load('graphics/snail/snail2.png')  # Laddar in bilden snail1.png
+snail_index = 0
+snail_animation = [snail_animation_1, snail_animation_2]
+snail_surface = snail_animation[snail_index]
 
 # Fly
-fly_surf = pygame.image.load('graphics/fly/Fly1.png').convert_alpha()
+fly_animation_1 = pygame.image.load('graphics/fly/Fly1.png').convert_alpha()
+fly_animation_2 = pygame.image.load('graphics/fly/Fly2.png').convert_alpha()
+fly_index = 0
+fly_animation = [fly_animation_1, fly_animation_2]
+fly_surf = fly_animation[fly_index]
 
 # Player
 player_walk1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
@@ -127,6 +141,20 @@ while True:
                     obstacles_list.append(snail_surface.get_rect(midbottom=(randint(800, 1100), 300)))  # Lägger till en snigel i listan av obstacles
                 else:
                     obstacles_list.append(fly_surf.get_rect(midbottom=(randint(800, 1100), 210)))
+
+            if event.type == snail_timer:
+                if snail_index == 0:  # Varannan gång blittar vi första snigelnbilden, varannan gång den andra
+                    snail_index = 1
+                else:
+                    snail_index = 0
+                snail_surface = snail_animation[snail_index]
+
+            if event.type == fly_timer:
+                if fly_index == 0:  # Varannan gång blittar vi första flugbilden, varannan gång den andra
+                    fly_index = 1
+                else:
+                    fly_index = 0
+                fly_surf = fly_animation[fly_index]
 
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
