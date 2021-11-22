@@ -2,6 +2,44 @@ import pygame  # importera pygame packet
 from random import randint
 from sys import exit  # importera function exit from modul sys
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        player_walk1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
+        player_walk2 = pygame.image.load('graphics/Player/player_walk_2.png').convert_alpha()
+        self.player_walk = [player_walk1, player_walk2]
+        self.jump = pygame.image.load('graphics/Player/jump.png').convert_alpha()
+        self.player_index = 0
+        self.image = self.player_walk[self.player_index]
+        self.rect = self.image.get_rect(midbottom=(50, 300))
+
+        self.gravity = 0
+
+    def player_input(self):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_SPACE] and self.rect.bottom >= 300:
+            self.gravity = -20
+
+    def animation(self):
+        if self.rect.bottom < 300:
+            self.image = self.jump
+        else:
+            self.player_index += 0.1
+            if self.player_index > len(self.player_walk):
+                self.player_index = 0
+            self.image = self.player_walk[int(self.player_index)]
+
+    def apply_gravity(self):
+        self.gravity += 1
+        self.rect.y += self.gravity
+        if self.rect.bottom >= 300:
+            self.rect.bottom = 300
+
+    def update(self):
+        self.player_input()
+        self.animation()
+        self.apply_gravity()
+
 
 def display_score():
     """ visa score av användare"""
@@ -60,6 +98,11 @@ clock = pygame.time.Clock()  # Skapar en klocka från att pygame.init() kördes
 game_active = False  # variabln för att kolla om game ska köra
 start_time = 0  # varibel att spara senast tiden
 # # # # Surface, Rektanglar & Fonts # # # #
+
+#Group
+player = pygame.sprite.GroupSingle()
+player.add(Player())
+
 
 # Timers för event
 obstacle_timer = pygame.USEREVENT + 1  # Vi skapar en timer genom att använda pygame's USEREVENT.
@@ -170,13 +213,14 @@ while True:
         obstacles_list = obstacle_movement(obstacles_list) # anropa function obstacle_movement
         game_active = collision(player_rect, obstacles_list) # anropa function collision
         # player
-        player_gravity += 1
-        player_rect.y += player_gravity
-        if player_rect.bottom >= 300:  # efter player hoppade och trilla ned, vi kontrolerar om att stå på ground surface
-            player_rect.bottom = 300
-        player_surf, player_index = player_animation(player_surf, player_index)
-        screen.blit(player_surf, player_rect)  # Sätter spelaren på skärmen med positionen av player_rect
-
+        # player_gravity += 1
+        # player_rect.y += player_gravity
+        # if player_rect.bottom >= 300:  # efter player hoppade och trilla ned, vi kontrolerar om att stå på ground surface
+        #     player_rect.bottom = 300
+        # player_surf, player_index = player_animation(player_surf, player_index)
+        # screen.blit(player_surf, player_rect)  # Sätter spelaren på skärmen med positionen av player_rect
+        player.draw(screen)
+        player.update()
     if not game_active:
         screen.fill((94, 129, 162))
 
