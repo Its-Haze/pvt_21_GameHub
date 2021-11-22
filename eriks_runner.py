@@ -5,6 +5,71 @@ from random import randint
 
 # https://youtu.be/AY9MnQ4x3zk?t=10838
 
+# TODO: check player class
+# TODO: fix obstacle class
+# TODO: remove all previous code that is no longer needed
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        player_walk_1 = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()  # surface - frames
+        player_walk_2 = pygame.image.load('graphics/player/player_walk_2.png').convert_alpha()  # surface - frames
+        self.player_walk = [player_walk_1, player_walk_2]  # lista av de alla frames
+        self.player_index = 0  # start index
+        self.player_jump = pygame.image.load('graphics/player/jump.png').convert_alpha()  # surface - jump
+
+        self.image = self.player_walk[self.player_index]  # image = listan med indexed [player_index]
+        self.rect = self.image.get_rect(midbottom=(200, 300))
+        self.gravity = 0
+
+        
+    def player_input(self):
+        keys = pygame.key.get_pressed()  # få en lista av alla keys som går att klicka
+        if keys[pygame.K_SPACE] and self.rect.bottom >= 300:  # om mellanslaget trycks och spelaren är på y_300
+            self.gravity = -17  # om man hoppar så får blir gravity -20
+        
+        
+    def player_move(self):
+        # player not walking out of frame
+        if self.rect.left < 0:
+            self.rect.left = 0  # om spelaren är utanför vänstra sidan av skärmen
+        if self.rect.right > 800:
+            self.rect.right = 800  # om spelaren är utanför högra sidan av skärmen
+
+        # player walking movement speed
+        if moving_right:
+            self.rect.x += 4  # hastighet för att gå höger
+        if moving_left:
+            self.rect.x -= 4  # hastighet för att gå vänster
+            
+    
+    def apply_gravity(self):
+        self.gravity += 1  # ökar y axelns värde med 1 hela tiden
+        self.rect.y += self.gravity  # sätter y värdet till det som gravity är
+        if self.rect.bottom >= 300:  # om rektangelns nedre del är mindre eller lika med 300
+            self.rect.bottom = 300  # sätt rektangelns bottom till 300
+    
+    def animation_state(self):
+        """ Play walking animation if player is on floor, or jump animation if not on floor"""
+        if self.rect.bottom < 300: # om spelaren inte är på marken
+            self.image = self.player_jump
+        else:
+            if moving_right or moving_left:
+                self.player_index += 0.1
+                if self.player_index >= len(self.player_walk):
+                    self.player_index = 0
+                self.image = self.player_walk[int(self.player_index)]
+            else:
+                self.image = self.player_walk[0]
+
+    def update(self):
+        """ Update the methods of the class """
+        self.player_input()
+        self.apply_gravity()
+        self.animation_state()
+        self.player_move()
+
 
 def display_score():
     """ visa score av användare """
@@ -20,7 +85,7 @@ def obstacle_movement(obstacle_list):
 
     if obstacle_list:  # om listan inte är tom
         for obstacle_rect in obstacle_list:  # för varje mob i listan
-            obstacle_rect.x -= 10  # hastigheten på alla mobs att röra sig till vänster
+            obstacle_rect.x -= 5  # hastigheten på alla mobs att röra sig till vänster
 
             if obstacle_rect.bottom == 300:  # om deras bottom-y värde ligger på 300 är det en snigel
                 screen.blit(snail_surf, obstacle_rect)  # skriv ut snigeln på skärmen med dens nuvarande obstacle_rect position
@@ -55,15 +120,16 @@ def player_animation(player_surf, player_index):
                 player_index = 0  # sätt tillbaka variabeln till 0 om den gått till 2.0
             player_surf = player_walk[int(player_index)]  # bilden för gubben blir en surface från listan med indexet player_index
             # walk animation
-        else: player_surf = player_walk[0]  # om spelaren inte rör sig så ska bara indexet 0 visas
+        else:
+            player_surf = player_walk[0]  # om spelaren inte rör sig så ska bara indexet 0 visas
     return player_surf, player_index
 
 
 # # # # Aktivera Pygame # # # #
-
 pygame.init()  # initiera pygame biblioteket
 pygame.display.set_caption("The insane runner")
-screen = pygame.display.set_mode((800, 400))  # Skapa ett Pygame fönster (width=800, Height=400)
+WINDOW_SIZE = (800, 400)
+screen = pygame.display.set_mode(WINDOW_SIZE)  # Skapa ett Pygame fönster (width=800, Height=400)
 clock = pygame.time.Clock()  # Skapar en klocka från att pygame.init() kördes
 pygame.time.Clock()
 game_active = False  # variabeln för att kolla om game ska köra
@@ -75,7 +141,8 @@ start_time = 0  # variabel att spara senast tiden
 test_font = pygame.font.Font('font/Pixeltype.ttf', 50)  # loading en font
 
 # Obstacles - kommer innehålla alla sniglar och flugor som har spawnats
-obstacle_rect_list = []
+
+obstacle_rect_list = []  # kommer innehålla alla obstacles-rektanglar
 
 # Sky
 sky_surface = pygame.image.load('graphics/Sky.png').convert()  # surface - Sky.png
@@ -83,13 +150,33 @@ sky_surface = pygame.image.load('graphics/Sky.png').convert()  # surface - Sky.p
 # Ground
 ground_surface = pygame.image.load('graphics/ground.png').convert()  # surface - ground.png
 
+
+# Groups
+
+player = pygame.sprite.GroupSingle()
+player.add(Player())
+
+
+
+
+
+# # # Obstacle Animation # # #
 # Snail
-snail_surf = pygame.image.load('graphics/snail/snail1.png').convert_alpha()  # surface - snail1.png
+snail_frame_1 = pygame.image.load('graphics/snail/snail1.png').convert_alpha()  # frame - snail1.png
+snail_frame_2 = pygame.image.load('graphics/snail/snail2.png').convert_alpha()  # frame - snail2.png
+snail_frames = [snail_frame_1, snail_frame_2]  # lista av frames
+snail_index = 0 # start index
+snail_surf = snail_frames[snail_index]  # surface = indexet vi är på i listan
 
 # Fly
-fly_surf = pygame.image.load('graphics/fly/fly1.png').convert_alpha()  # surface - fly1.png
+fly_frame1 = pygame.image.load('graphics/fly/fly1.png').convert_alpha()  # frame - fly1.png
+fly_frame2 = pygame.image.load('graphics/fly/fly2.png').convert_alpha()  # frame - fly2.png
+fly_frames = [fly_frame1, fly_frame2]  # lista av frames
+fly_index = 0  # start index
+fly_surf = fly_frames[fly_index]  # surface = indexet vi är på i listan
+# ---------------------------
 
-# Player & Animation surfaces
+# # #  Player & Animation surfaces # # #
 player_walk_1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()  # surface - player_walk_1.png
 player_walk_2 = pygame.image.load('graphics/Player/player_walk_2.png').convert_alpha()  # surface - player_walk_2.png
 player_walk = [player_walk_1, player_walk_2]  # lista av alla bilder vi vill animera
@@ -98,9 +185,8 @@ player_index = 0  # indexet byter mellan walk_1 och walk_2 så den byter mellan 
 
 player_jump = pygame.image.load('graphics/Player/jump.png').convert_alpha()  # Laddar in bilden jump.png
 player_surf = player_walk[player_index]  # Player_surf ändras hela tiden baserat på vilket index vi ligger i
-
+# ---------------------------
 player_rect = player_surf.get_rect(midbottom=(100, 300))  # skapar rektangel som man kan styra
-
 
 player_gravity = 0  # variabeln för att kontrolera hur hög player ska hoppa
 
@@ -122,13 +208,18 @@ game_message_rect = game_message.get_rect(center=(400, 350))  # text rect - game
 score = 0
 
 
-# Obstacle_timer - Custom USEREVENT
+# # # Obstacle_timer - Custom USEREVENT # # #
 # https://coderslegacy.com/python/pygame-userevents/
 
-obstacle_timer = pygame.USEREVENT + 1  # Vi skapar ett custom event med +1 id
+obstacle_timer = pygame.USEREVENT + 1  # nytt custom event
 
 pygame.time.set_timer(obstacle_timer, 1500)  # skapar en timer som kör obstacle_timer var 1500 milli-sekund
 
+snail_animation_timer = pygame.USEREVENT + 2  # nytt custom event
+pygame.time.set_timer(snail_animation_timer, 300)  # kör denna varje 300 millisekund
+
+fly_animation_timer = pygame.USEREVENT + 3  # nytt custom event
+pygame.time.set_timer(fly_animation_timer, 200)  # kör denna varje 200 millisekund
 
 # # # # # GAME LOOP # # # # #
 while True:
@@ -152,26 +243,40 @@ while True:
                         player_gravity = -17  # hoppa upp 20px från player står
 
             if event.type == pygame.KEYUP:  # om någon tangent har släppts upp
-                if event.key == pygame.K_RIGHT: moving_right = False # right_arrow down
+                if event.key == pygame.K_RIGHT: moving_right = False  # right_arrow down
                 if event.key == pygame.K_LEFT: moving_left = False  # left_arrow up
 
         if not game_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
                 game_active = True  # kör game igen
                 start_time = int(pygame.time.get_ticks() / 1000)  # spara tiden av sista gång
+        if game_active:
+            if event.type == obstacle_timer:  # om obstacle timer har hänt
+                if randint(0, 2):  # random nummer mellan 0 - 2
+                    # om 1 eller 2 || True
+                    # skicka ut en snigel
+                    # appenda en ny snigel rektangel med x värde mellan 800 - 1100 och på y värde 300
+                    obstacle_rect_list.append(snail_surf.get_rect(bottomright=(randint(800, 1100), 300)))
+                else:
+                    # om 0 || False
+                    # skicka ut fluga
+                    # appenda en ny fluga rektangel med x värde mellan 800 - 1100 och på y värde 210
+                    obstacle_rect_list.append(fly_surf.get_rect(bottomright=(randint(800, 1100), 210)))
 
-        if event.type == obstacle_timer and game_active:  # om obstacle timer har hänt och spelet är aktivt
-            if randint(0, 2):  # random nummer mellan 0 - 2
-                # om 1 eller 2 || True
-                # skicka ut en snigel
+            if event.type == snail_animation_timer:
+                if snail_index == 0:
+                    snail_index = 1
+                else:
+                    snail_index = 0
+                snail_surf = snail_frames[snail_index]
 
-                # appenda en ny snigel rektangel med x värde mellan 800 - 1100 och på y värde 300
-                obstacle_rect_list.append(snail_surf.get_rect(bottomright=(randint(800, 1100), 300)))
-            else:
-                # om 0 || False
-                # skicka ut fluga
-                # appenda en ny fluga rektangel med x värde mellan 800 - 1100 och på y värde 210
-                obstacle_rect_list.append(fly_surf.get_rect(bottomright=(randint(800, 1100), 210)))
+            if event.type == fly_animation_timer:
+                if fly_index == 0:
+                    fly_index = 1
+                else:
+                    fly_index = 0
+                fly_surf = fly_frames[fly_index]
+
 
     if game_active:
         screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
@@ -179,6 +284,12 @@ while True:
         score = display_score()  # Sätter retur värdet av funktionen till score
 
         # player
+        player.draw(screen)
+        player.update()
+        
+        
+        
+        
         player_gravity += 1  # ökar y axelns värde med 1 hela tiden
         player_rect.y += player_gravity  # sätter y värdet till det som gravity är
         if player_rect.bottom >= 300:  # efter player hoppade och trilla ned, vi kontrollerar om att stå på ground surface
