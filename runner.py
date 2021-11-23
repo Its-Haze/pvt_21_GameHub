@@ -15,11 +15,14 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(50, 300))
 
         self.gravity = 0
+        self.jump_sound = pygame.mixer.Sound('audio/jump.mp3')
+        self.jump_sound.set_volume(0.5)
 
     def player_input(self):
         key = pygame.key.get_pressed()
         if key[pygame.K_SPACE] and self.rect.bottom >= 300:
             self.gravity = -20
+            self.jump_sound.play()
 
     def animation(self):
         if self.rect.bottom < 300:
@@ -84,12 +87,14 @@ class PlayerStand(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(400, 200))
 
 
-class Instruction(pygame.sprite.Sprite):
+class Instruction:
     def __init__(self, text, color, position):
-        super().__init__()
         test_font = pygame.font.Font('font/Pixeltype.ttf', 50)
         self.image = test_font.render(text, False, color)
-        self.rect = self.image.get_rect(position)
+        self.rect = self.image.get_rect(center=position)
+
+    def draw_instruction(self, screen):
+        screen.blit(self.image, self.rect)
 
 
 def display_score():
@@ -156,6 +161,10 @@ clock = pygame.time.Clock()  # Skapar en klocka från att pygame.init() kördes
 game_active = False  # variabln för att kolla om game ska köra
 start_time = 0  # varibel att spara senast tiden
 # # # # Surface, Rektanglar & Fonts # # # #
+
+bg_sound = pygame.mixer.Sound('audio/music.wav')
+bg_sound.set_volume(0.1)
+bg_sound.play()
 
 #Group
 player = pygame.sprite.GroupSingle()
@@ -288,28 +297,29 @@ while True:
         game_active = collision_sprite()
     else:
         screen.fill((94, 129, 162))
-        instructions = pygame.sprite.GroupSingle()
+        instructions = [Instruction('Astronaut runner', 'Black', (400, 50)),
+                        Instruction('Press space to play', 'Black', (400, 350)),
+                        Instruction('Press space to play again', 'Black', (400, 350))]
+        instructions[0].draw_instruction(screen)
         if score == 0:  # Visar speltitel om score är noll
-            instructions.add(Instruction('Press space to play', 'Black'))
-            instructions.draw(screen)
-            instructions.update()
+            instructions[1].draw_instruction(screen)
             # screen.blit(text_surface, text_rectangle)
             # instructions_surf = test_font.render('Press space to play', False, 'Black')
         else:  # Om spelaren har spelat en omgång, visa score istället
-            display_pre_score(score)
-            instructions_surf = test_font.render('Press space to play again', False, 'Black')
-        instructions_rect = instructions_surf.get_rect(center=(400, 350))
+            instructions[2].draw_instruction(screen)
+            # display_pre_score(score)
+            # instructions_surf = test_font.render('Press space to play again', False, 'Black')
+        #instructions_rect = instructions_surf.get_rect(center=(400, 350))
         player_stand = pygame.sprite.GroupSingle()
         player_stand.add(PlayerStand())
         player_stand.draw(screen)
-        player_stand.update()
         #player_rotate -= 4
         #
         # _player_stand = pygame.transform.rotozoom(player_stand, player_rotate,
         #                                           2)  # Tar en bild och gör den större eller rotera den.
         # player_stand_rect = _player_stand.get_rect(center=(400, 200))
         #screen.blit(_player_stand, player_stand_rect)
-        screen.blit(instructions_surf, instructions_rect)
+        #screen.blit(instructions_surf, instructions_rect)
         obstacles_list.clear()  # Tömmer listan när spelaren har förlorat
 
     pygame.display.update()  # uppdaterar skärmen [pygame window]
