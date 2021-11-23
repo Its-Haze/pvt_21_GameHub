@@ -281,7 +281,7 @@ while True:
 
         score = display_score()
         # obstacles_list = obstacle_movement(obstacles_list) # anropa function obstacle_movement
-        game_active = collision(player_rect, obstacles_list) # anropa function collision
+        # game_active = collision(player_rect, obstacles_list) # anropa function collision
         # player
         # player_gravity += 1
         # player_rect.y += player_gravity
