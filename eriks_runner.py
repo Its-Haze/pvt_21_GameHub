@@ -23,13 +23,11 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(200, 300))
         self.gravity = 0
 
-        
     def player_input(self):
         keys = pygame.key.get_pressed()  # få en lista av alla keys som går att klicka
         if keys[pygame.K_SPACE] and self.rect.bottom >= 300:  # om mellanslaget trycks och spelaren är på y_300
             self.gravity = -17  # om man hoppar så får blir gravity -20
-        
-        
+
     def player_move(self):
         # player not walking out of frame
         if self.rect.left < 0:
@@ -42,14 +40,13 @@ class Player(pygame.sprite.Sprite):
             self.rect.x += 4  # hastighet för att gå höger
         if moving_left:
             self.rect.x -= 4  # hastighet för att gå vänster
-            
-    
+
     def apply_gravity(self):
         self.gravity += 1  # ökar y axelns värde med 1 hela tiden
         self.rect.y += self.gravity  # sätter y värdet till det som gravity är
         if self.rect.bottom >= 300:  # om rektangelns nedre del är mindre eller lika med 300
             self.rect.bottom = 300  # sätt rektangelns bottom till 300
-    
+
     def animation_state(self):
         """ Play walking animation if player is on floor, or jump animation if not on floor"""
         if self.rect.bottom < 300: # om spelaren inte är på marken
@@ -155,9 +152,6 @@ ground_surface = pygame.image.load('graphics/ground.png').convert()  # surface -
 
 player = pygame.sprite.GroupSingle()
 player.add(Player())
-
-
-
 
 
 # # # Obstacle Animation # # #
