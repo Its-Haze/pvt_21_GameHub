@@ -54,7 +54,7 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.player_walk[int(self.player_index)]  # sätt image till int(indexed) av listan
             else:
                 self.image = self.player_walk[0]  # om spelaren inte rör sig
-                
+  
     def update(self):
         """ Update the methods of the class """
         self.player_move()  # Update player_move
