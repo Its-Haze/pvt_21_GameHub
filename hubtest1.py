@@ -1,5 +1,7 @@
 import pygame
 from sys import exit
+from eriks_runner import play_runner
+from tetris import play_tetris
 
 
 class Image:
@@ -73,8 +75,11 @@ def start_game_hub():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if tetris.image.image_rect.collidepoint(event.pos):
                     print('Klickade på tetris')
+                    play_tetris()
                 if runner.image.image_rect.collidepoint(event.pos):
                     print('Klickade på runner')
+                    play_runner()
+
 
         pygame.display.update()
         clock.tick(60)
