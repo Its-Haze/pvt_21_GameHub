@@ -79,6 +79,31 @@ class Obstacle(pygame.sprite.Sprite):
             self.kill()
 
 
+class Coin(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        coin_animation_1 = pygame.image.load('graphics/coins/coin1.png').convert_alpha()
+        coin_animation_2 = pygame.image.load('graphics/coins/coin2.png').convert_alpha()
+        self.coin_frames = [coin_animation_1, coin_animation_2]
+        self.coin_index = 0
+        self.image = self.coin_frames[self.coin_index]
+        self.rect = self.image.get_rect(midbottom=(randint(0, 200), 0))
+
+    def animation_coin(self):
+        self.coin_index += 0.1
+        if self.coin_index > len(self.coin_frames):
+            self.coin_index = 0
+        self.image = self.coin_frames[int(self.coin_index)]
+
+    def update(self):
+        self.animation_coin()
+        self.rect.y += 5
+        self.destroy()
+
+    def destroy(self):
+        if self.rect.y > 300:
+            self.kill()
+
 class PlayerStand(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -139,8 +164,20 @@ def collision(player, obstacles):
 def collision_sprite():
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, False):
         obstacle_group.empty()
+        bg_sound_game.stop()
+        bg_sound_death.play(0)
+        pygame.time.wait(4000)
+        bg_sound_lobby.play()
         return False
     return True
+
+
+def collision_with_coin_sprite():
+    if pygame.sprite.spritecollide(player.sprite, coin_group, False):
+        coin_group.empty()
+        bg_sound_coin.play(0)
+        return True
+    return False
 
 
 def player_animation(pl_surf, index):
@@ -160,18 +197,24 @@ screen = pygame.display.set_mode((800, 400))  # Skapa ett Pygame fönster att jo
 clock = pygame.time.Clock()  # Skapar en klocka från att pygame.init() kördes
 game_active = False  # variabln för att kolla om game ska köra
 start_time = 0  # varibel att spara senast tiden
+bg_sound_game = pygame.mixer.Sound('audio/music.mp3')
+bg_sound_lobby = pygame.mixer.Sound('audio/lobby.wav')
+bg_sound_death = pygame.mixer.Sound('audio/death.mp3')
+bg_sound_coin = pygame.mixer.Sound('audio/coin.wav')
+bg_sound_game.set_volume(0.2)
+bg_sound_lobby.set_volume(0.05)
+bg_sound_death.set_volume(0.2)
+bg_sound_coin.set_volume(0.2)
+bg_sound_lobby.play()
 # # # # Surface, Rektanglar & Fonts # # # #
 
-bg_sound = pygame.mixer.Sound('audio/music.wav')
-bg_sound.set_volume(0.1)
-bg_sound.play()
 
 #Group
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
 obstacle_group = pygame.sprite.Group()
-
+coin_group = pygame.sprite.Group()
 
 # Timers för event
 obstacle_timer = pygame.USEREVENT + 1  # Vi skapar en timer genom att använda pygame's USEREVENT.
@@ -184,9 +227,14 @@ pygame.time.set_timer(snail_timer, 500)
 fly_timer = pygame.USEREVENT + 3 # Vi skapar en timer för att animera flugan
 pygame.time.set_timer(fly_timer, 200)
 
+coin_timer = pygame.USEREVENT + 4  # Vi skapar en timer för att välja hur ofta bilden på coin skall bytas ut - detta skapar en animering
+pygame.time.set_timer(coin_timer, 4000)
 
 # Obstacles
 obstacles_list = []  # Vi skapar listan som våra obstacles kommer ligga i
+
+# Coins
+coins_list = []  # Vi skapar listan som våra coins kommer ligga i
 
 # Sky
 sky_surface = pygame.image.load('graphics/Sky.png')  # Laddar in bilden Sky.png
@@ -210,6 +258,13 @@ fly_animation_2 = pygame.image.load('graphics/fly/Fly2.png').convert_alpha()
 fly_index = 0
 fly_animation = [fly_animation_1, fly_animation_2]
 fly_surf = fly_animation[fly_index]
+
+# Coin
+coin_animation_1 = pygame.image.load('graphics/coins/coin1.png').convert_alpha()
+coin_animation_2 = pygame.image.load('graphics/coins/coin2.png').convert_alpha()
+coin_index = 0
+coin_animation = [coin_animation_1, coin_animation_2]
+coin_surf = coin_animation[coin_index]
 
 # Player
 player_walk1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
@@ -247,6 +302,9 @@ while True:
                 if event.key == pygame.K_SPACE and player_rect.bottom >= 300:  # hoppa med mellandslag,
                     player_gravity = -20  # hoppa upp 20 från player står
 
+            if event.type == coin_timer:
+                coin_group.add(Coin())
+
             if event.type == obstacle_timer:
                 obstacle_group.add(Obstacle(choice(['fly', 'snail', 'snail', 'snail'])))
                 # print('Våran obstacle timer funkar!')
@@ -269,9 +327,19 @@ while True:
                     fly_index = 0
                 fly_surf = fly_animation[fly_index]
 
+            if event.type == coin_timer:
+                if coin_index == 0:  # Varannan gång blittar vi första flugbilden, varannan gång den andra
+                    coin_index = 1
+                else:
+                    coin_index = 0
+                coin_surf = coin_animation[coin_index]
+
+
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
                 game_active = True  # kör game igen
+                bg_sound_lobby.stop()
+                bg_sound_game.play()
                 start_time = pygame.time.get_ticks()  # spara tiden av sista gång
 
     if game_active:
@@ -294,7 +362,12 @@ while True:
 
         obstacle_group.draw(screen)
         obstacle_group.update()
+        coin_group.draw(screen)
+        coin_group.update()
         game_active = collision_sprite()
+        if collision_with_coin_sprite():
+            bg_sound_coin.play(0)
+
     else:
         screen.fill((94, 129, 162))
         instructions = [Instruction('Astronaut runner', 'Black', (400, 50)),
