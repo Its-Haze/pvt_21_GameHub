@@ -75,9 +75,26 @@ class Obstacle(pygame.sprite.Sprite):
             snail_frame_2 = pygame.image.load("graphics/Snail/snail2.png").convert_alpha()
             self.frames = [snail_frame_1, snail_frame_2]
             y_pos = 300
+        elif type == "dragon":
+            dragon_frame_1 = pygame.image.load("graphics/dragon/Walk1.png").convert_alpha()
+            dragon_frame_2 = pygame.image.load("graphics/dragon/Walk2.png").convert_alpha()
+            dragon_frame_3 = pygame.image.load("graphics/dragon/Walk3.png").convert_alpha()
+            dragon_frame_4 = pygame.image.load("graphics/dragon/Walk4.png").convert_alpha()
+            dragon_frame_5 = pygame.image.load("graphics/dragon/Walk5.png").convert_alpha()
+
+            unscaled_frames = [dragon_frame_1, dragon_frame_2, dragon_frame_3, dragon_frame_4, dragon_frame_5]
+            
+            self.frames = [pygame.transform.scale(i, (int(i.get_width() // 1.5), int(i.get_height() // 1.5))) for i in unscaled_frames]
+
+            y_pos = 300
+            
         self.animation_index = 0
         self.image = self.frames[self.animation_index]
         self.rect = self.image.get_rect(midbottom=(randint(800, 1100), y_pos))
+        print(f"self.rect - {self.rect}")
+        print(f"self.image - {self.image}")
+        print(f"self.image.get_rect - {self.image.get_rect}")
+        print(f"self.animation_index - {self.animation_index}")
 
     def animation_state(self):
         self.animation_index += 0.1
@@ -168,7 +185,7 @@ score = 0
 
 obstacle_timer = pygame.USEREVENT + 1  # nytt custom event
 
-pygame.time.set_timer(obstacle_timer, 1500)  # skapar en timer som kör obstacle_timer var 1500 milli-sekund
+pygame.time.set_timer(obstacle_timer, 1600)  # skapar en timer som kör obstacle_timer var 1500 milli-sekund
 
 snail_animation_timer = pygame.USEREVENT + 2  # nytt custom event
 pygame.time.set_timer(snail_animation_timer, 300)  # kör denna varje 300 millisekund
@@ -187,7 +204,8 @@ while True:
 
         if game_active:
             if event.type == obstacle_timer:  # om obstacle timer har hänt
-                obstacle_group.add(Obstacle(choice(["fly", "snail", "snail", "snail"])))
+                #obstacle_group.add(Obstacle(choice(["fly", "snail", "dragon"])))
+                obstacle_group.add(Obstacle(choice(["snail", "fly", "dragon"])))
                 
             # if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
             #     if player_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
