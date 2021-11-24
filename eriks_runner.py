@@ -23,7 +23,7 @@ class Player(pygame.sprite.Sprite):
         if game_active:
             keys = pygame.key.get_pressed()  # få en lista av alla keys som går att klicka
             if keys[pygame.K_SPACE] and self.rect.bottom >= 300:  # om mellanslaget trycks och spelaren är på y_300
-                self.gravity = -17
+                self.gravity = -18
             # player not walking out of frame
             if self.rect.left < 0:
                 self.rect.left = 0  # om spelaren är utanför vänstra sidan av skärmen
@@ -104,7 +104,7 @@ class Obstacle(pygame.sprite.Sprite):
 
     def update(self):
         self.animation_state()
-        self.rect.x -= 5
+        self.rect.x -= 7
         self.destroy()
 
     def destroy(self):
