@@ -192,13 +192,17 @@ while True:
             # if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
             #     if player_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
             #         player_gravity = -20  # hoppa upp
-            # if event.type == pygame.KEYDOWN:  # om knappen har tryckts ner
+            if event.type == pygame.KEYDOWN:  # om knappen har tryckts ner
+                if event.key == pygame.K_RIGHT: moving_right = True  # right_arrow down
+                if event.key == pygame.K_LEFT: moving_left = True  # left_arrow down
 
             #     if event.key == pygame.K_SPACE:  # Om mellanslags tangenten har tryckts
             #         if player_rect.bottom >= 300:  # hoppa med mellandslag,
             #             player_gravity = -17  # hoppa upp 20px från player står
 
-            # if event.type == pygame.KEYUP:  # om någon tangent har släppts upp
+            if event.type == pygame.KEYUP:  # om någon tangent har släppts upp
+                if event.key == pygame.K_RIGHT: moving_right = False  # right_arrow down
+                if event.key == pygame.K_LEFT: moving_left = False  # left_arrow up
 
         if not game_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
