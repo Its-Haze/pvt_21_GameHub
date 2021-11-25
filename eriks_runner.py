@@ -168,11 +168,6 @@ def play_runner():
 
     obstacle_group = pygame.sprite.Group()
 
-
-    # Sido rörelser för spelaren med piltangenterna
-    moving_right = False
-    moving_left = False
-
     # intro screen
     player_stand_rotate = 0  # Börjar att visa bilden utan någon rotation
     player_stand = pygame.image.load("graphics/Player/player_stand.png").convert_alpha()  # Surface - player_stand
@@ -284,8 +279,6 @@ def play_runner():
 
             game_instruction_rect = game_instruction.get_rect(center=(400, 350))
             screen.blit(game_instruction, game_instruction_rect)  # lägg meddelandet att starta om spelet
-
-
 
         pygame.display.update()  # uppdaterar skärmen [pygame window]
         clock.tick(60)  # hur snabb program kör [60 fps]
