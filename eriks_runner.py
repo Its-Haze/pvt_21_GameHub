@@ -117,6 +117,33 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
             self.kill()  # ta bort den från obstacle gruppen
 
 
+class Coin(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        coin_animation_1 = pygame.image.load('Runner_folder/graphics/coins/coin1.png').convert_alpha()
+        coin_animation_2 = pygame.image.load('Runner_folder/graphics/coins/coin2.png').convert_alpha()
+
+        self.coin_frames = [coin_animation_1, coin_animation_2]
+        self.coin_index = 0
+        self.image = self.coin_frames[self.coin_index]
+        self.rect = self.image.get_rect(midbottom=(randint(50, 750), 0))
+
+    def animation_coin(self):
+        self.coin_index += 0.1
+        if self.coin_index > len(self.coin_frames):
+            self.coin_index = 0
+        self.image = self.coin_frames[int(self.coin_index)]
+
+    def update(self):
+        self.animation_coin()
+        self.rect.y += 5
+        self.destroy()
+
+    def destroy(self):
+        if self.rect.y > 300:
+            self.kill()
+
+
 def display_score(start_time, test_font, screen):
     """ visa score av användare """
     current_time = int(pygame.time.get_ticks() / 1000) - start_time  # hur långt det har gått sen pygame.init()
@@ -134,6 +161,15 @@ def collision_sprite(player, obstacle_group):
         return False
     else:
         return True
+
+
+def collision_with_coin_sprite(player, coin_group):
+    if pygame.sprite.spritecollide(player.sprite, coin_group, False):
+        coin_group.empty()
+        #bg_sound_coin.play(0)
+        return True
+    return False
+
 
 
 def play_runner():
@@ -168,6 +204,9 @@ def play_runner():
 
     obstacle_group = pygame.sprite.Group()
 
+    coin_group = pygame.sprite.Group()
+
+
     # intro screen
     player_stand_rotate = 0  # Börjar att visa bilden utan någon rotation
     player_stand = pygame.image.load("Runner_folder/graphics/Player/player_stand.png").convert_alpha()  # Surface - player_stand
@@ -195,6 +234,8 @@ def play_runner():
     fly_animation_timer = pygame.USEREVENT + 3  # nytt custom event
     pygame.time.set_timer(fly_animation_timer, 200)  # kör denna varje 200 millisekund
 
+    coin_timer = pygame.USEREVENT + 4  # Vi skapar en timer för att välja hur ofta bilden på coin skall bytas ut - detta skapar en animering
+    pygame.time.set_timer(coin_timer, 4000)
     # # # # # GAME LOOP # # # # #
     while True:
         # Allt inuti denna while loopen uppdateras på skärmen varje sekund
@@ -208,6 +249,9 @@ def play_runner():
                 if event.type == obstacle_timer:  # om obstacle timer har hänt
                     #obstacle_group.add(Obstacle(choice(["fly", "snail", "dragon"])))
                     obstacle_group.add(Obstacle(choice(["snail", "fly", "dragon"])))
+                
+                if event.type == coin_timer:
+                    coin_group.add(Coin())
                     
                 # if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
                 #     if player_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
@@ -247,6 +291,14 @@ def play_runner():
             # Obstacle Group
             obstacle_group.draw(screen)
             obstacle_group.update()
+            
+            # Coin Group
+            coin_group.draw(screen)
+            coin_group.update()
+            
+            if collision_with_coin_sprite(player, coin_group):
+                #bg_sound_coin.play(0)
+                pass
             
             # Collision
             game_active = collision_sprite(player, obstacle_group)

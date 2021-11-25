@@ -274,11 +274,11 @@ player_walk = [player_walk1, player_walk2]
 
 player_surf = player_walk[player_index]  # Laddar in bilden player_walk_1.png
 player_rect = player_surf.get_rect(midbottom=(100, 300))  # skapar rektangel som man kan styra
-player_gravity = 0  # variabln för att kontrolera hur hög player ska hoppa
+player_gravity = 0  # variabeln för att kontrolera hur hög player ska hoppa
 player_rotate = 0
 
 # Intro screen
-#player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
+# player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
 
 # Vi skapar en rektangel och centrerar den.
 
