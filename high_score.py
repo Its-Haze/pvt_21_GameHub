@@ -75,7 +75,7 @@ def high_score(screen, id, score, coins, view):
     data = get_data()
     list_users = data.get('users')
     if view:
-        pygame.draw.rect(screen, (51, 153, 255), (150, 0, 500, 400))
+        pygame.draw.rect(screen, (94, 129, 162), (0, 0, 800, 400))
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
