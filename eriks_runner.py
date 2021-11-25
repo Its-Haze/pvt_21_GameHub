@@ -95,8 +95,7 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
             # skapa en list comprehension som skalar ner alla bildernas storlek med 1,5
             self.frames = [pygame.transform.scale(i, (int(i.get_width() // 1.5), int(i.get_height() // 1.5))) for i in unscaled_frames]
 
-            y_pos = 300  # start positionen - Höjden på obstacle
-            
+            y_pos = 300  # start positionen - Höjden på obstacle 
         elif type == "cat":
             cat_frame_1 = pygame.image.load("Runner_folder/graphics/cat/cat_03.png").convert_alpha()  # Ladda bild
             cat_frame_2 = pygame.image.load("Runner_folder/graphics/cat/cat_04.png").convert_alpha()  # Ladda bild
@@ -125,6 +124,57 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
     def destroy(self):  # sprite.Sprite destroy metod
         if self.rect.x <= -100:  # om obstacle är för långt utanför skärmen
             self.kill()  # ta bort den från obstacle gruppen
+
+
+class Bird(pygame.sprite.Sprite):
+    def __init__(self, angle):  # initiera klassen och lägg in en sträng vad obstacle heter
+        super().__init__()  # initiera pygame.sprite.Sprite
+        self.angle = angle
+        bird_frame_1 = pygame.image.load("Runner_folder/graphics/birds/bird_1.png").convert_alpha()
+        bird_frame_2 = pygame.image.load("Runner_folder/graphics/birds/bird_2.png").convert_alpha()
+        bird_frame_3 = pygame.image.load("Runner_folder/graphics/birds/bird_3.png").convert_alpha()
+        bird_frame_4 = pygame.image.load("Runner_folder/graphics/birds/bird_4.png").convert_alpha()
+        bird_frame_5 = pygame.image.load("Runner_folder/graphics/birds/bird_5.png").convert_alpha()
+        bird_frame_6 = pygame.image.load("Runner_folder/graphics/birds/bird_6.png").convert_alpha()
+        bird_frame_7 = pygame.image.load("Runner_folder/graphics/birds/bird_7.png").convert_alpha()
+        bird_frame_8 = pygame.image.load("Runner_folder/graphics/birds/bird_8.png").convert_alpha()
+        unscaled_birds = [bird_frame_1, bird_frame_2, bird_frame_3, bird_frame_4, bird_frame_5, bird_frame_6, bird_frame_7, bird_frame_8]
+        y_pos = 75
+        if self.angle == "Right":
+            self.frames = [pygame.transform.scale(i, (int(i.get_width() // 17), int(i.get_height() // 17))) for i in unscaled_birds]
+            x_pos = 900
+
+        elif self.angle == "Left":
+            left_unscaled_bird = [pygame.transform.flip(i, True, False) for i in unscaled_birds]
+            self.frames = [pygame.transform.scale(i, (int(i.get_width() // 17), int(i.get_height() // 17))) for i in left_unscaled_bird]
+            x_pos = -100
+        self.animation_index = 0  # vilket index som bilden vi är på ska visa
+        self.image = self.frames[self.animation_index]  # image = listan av alla bilder med vilket index vi vill visa upp
+        self.rect = self.image.get_rect(midbottom=(x_pos, y_pos))  # rektangeln har ett random x värde och ett y värde
+
+    def animation_state(self):  # metod för att öka indexet så bilden ändras 
+        self.animation_index += 0.1  # öka hela tiden med 0.1
+        if self.animation_index >= len(self.frames):  # kolla om indexet är större eller lika med listans storlek
+            self.animation_index = 0  # sätt den tillbaka till 0
+        self.image = self.frames[int(self.animation_index)]  # sätt bilden till vad indexet är inuti frames listan
+
+    def update(self):  # sprite.Sprite update metod
+        self.animation_state()  # vilken animation vi ska visa
+        if self.angle == "Right":
+            self.rect.x -= 3  # flytta obstacle -3 pixlar
+        elif self.angle == "Left":
+            self.rect.x += 3  # fly
+        self.destroy()  # kolla om vi är utanför skärmen - DESTROY
+
+    def destroy(self):  # sprite.Sprite destroy metod
+        if self.angle == "Right":
+            if self.rect.x <= -100:  # om obstacle är för långt utanför skärmen
+                self.kill()  # ta bort den från obstacle gruppen
+        elif self.angle == "Left":
+            if self.rect.x >= 900:
+                self.kill()
+
+
 
 
 class Coin(pygame.sprite.Sprite):
@@ -163,11 +213,12 @@ def display_score(start_time, test_font, screen):
     return current_time  # returnera värdet av score
 
 
-def collision_sprite(player, obstacle_group, screen, score):
+def collision_sprite(player, obstacle_group, screen, score, bird_group):
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, True):
         player.empty()
         player.add(Player())
         obstacle_group.empty()
+        bird_group.empty()
         high_score(screen, "Erik", score, 10, False)
         return False
     else:
@@ -215,6 +266,8 @@ def play_runner():
     obstacle_group = pygame.sprite.Group()
 
     coin_group = pygame.sprite.Group()
+    
+    bird_group = pygame.sprite.Group()
 
 
     # intro screen
@@ -245,6 +298,12 @@ def play_runner():
 
     coin_timer = pygame.USEREVENT + 4  # Vi skapar en timer för att välja hur ofta bilden på coin skall bytas ut - detta skapar en animering
     pygame.time.set_timer(coin_timer, 4000)
+    
+    bird_timer = pygame.USEREVENT + 5
+    pygame.time.set_timer(bird_timer, 7000)
+    
+    
+    
     # # # # # GAME LOOP # # # # #
     while True:
         # Allt inuti denna while loopen uppdateras på skärmen varje sekund
@@ -256,7 +315,9 @@ def play_runner():
             
             if game_active:
                 if event.type == obstacle_timer:  # om obstacle timer har hänt
-                    obstacle_group.add(Obstacle(choice(["snail", "fly", "dragon", "cat"])))
+                    obstacle_group.add(Obstacle(choice(["fly", "snail", "dragon", "cat"])))
+                if event.type == bird_timer:
+                    bird_group.add(Bird(choice(["Left", "Right"])))
                 
                 if event.type == coin_timer:
                     coin_group.add(Coin())
@@ -265,23 +326,13 @@ def play_runner():
                     if event.key == pygame.K_ESCAPE:
                         print("ESC")
                         start_game_hub()
-                    # if event.key == pygame.K_RIGHT: moving_right = True  # right_arrow down
-                    # if event.key == pygame.K_LEFT: moving_left = True  # left_arrow down
-
-                #     if event.key == pygame.K_SPACE:  # Om mellanslags tangenten har tryckts
-                #         if player_rect.bottom >= 300:  # hoppa med mellandslag,
-                #             player_gravity = -17  # hoppa upp 20px från player står
-
-                # if event.type == pygame.KEYUP:  # om någon tangent har släppts upp
-                #     if event.key == pygame.K_RIGHT: moving_right = False  # right_arrow down
-                #     if event.key == pygame.K_LEFT: moving_left = False  # left_arrow up
-
+                        
             if not game_active:
-                
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
                     if leaderboard_surf_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
                         print("clicked the leaderboard!")
                         high_score(screen, "Erik", score, 10, True)
+                        
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
                         game_active = True  # kör game igen
@@ -305,13 +356,16 @@ def play_runner():
             # Coin Group
             coin_group.draw(screen)
             coin_group.update()
+            # Bird Group
+            bird_group.draw(screen)
+            bird_group.update()
             
             if collision_with_coin_sprite(player, coin_group):
                 #bg_sound_coin.play(0)
                 pass
             
             # Collision
-            game_active = collision_sprite(player, obstacle_group, screen, score)
+            game_active = collision_sprite(player, obstacle_group, screen, score, bird_group)
 
         if not game_active:
             screen.fill((94, 129, 162))  # fyll skärmen med färg
