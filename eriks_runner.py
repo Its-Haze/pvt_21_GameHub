@@ -97,6 +97,13 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
 
             y_pos = 300  # start positionen - Höjden på obstacle
             
+        elif type == "cat":
+            cat_frame_1 = pygame.image.load("Runner_folder/graphics/cat/cat_03.png").convert_alpha()  # Ladda bild
+            cat_frame_2 = pygame.image.load("Runner_folder/graphics/cat/cat_04.png").convert_alpha()  # Ladda bild
+            cat_frame_3 = pygame.image.load("Runner_folder/graphics/cat/cat_05.png").convert_alpha()  # Ladda bild
+            self.frames = [cat_frame_1, cat_frame_2, cat_frame_3]
+            y_pos = 300
+            
         self.animation_index = 0  # vilket index som bilden vi är på ska visa
         self.image = self.frames[self.animation_index]  # image = listan av alla bilder med vilket index vi vill visa upp
         self.rect = self.image.get_rect(midbottom=(randint(800, 1100), y_pos))  # rektangeln har ett random x värde och ett y värde
@@ -166,10 +173,9 @@ def collision_sprite(player, obstacle_group):
 def collision_with_coin_sprite(player, coin_group):
     if pygame.sprite.spritecollide(player.sprite, coin_group, False):
         coin_group.empty()
-        #bg_sound_coin.play(0)
+        # bg_sound_coin.play(0)
         return True
     return False
-
 
 
 def play_runner():
@@ -214,9 +220,6 @@ def play_runner():
     game_name = test_font.render("Pixel runner", False, (111, 196, 169))  # Text surface - game_name
     game_name_rect = game_name.get_rect(center=(400, 50))  # text rect - game_name
 
-    game_message = test_font.render("Press space to run", False, (111, 196, 169))  # text surface - game_message
-    game_message_rect = game_message.get_rect(center=(400, 350))  # text rect - game_message
-
     # Score
     score = 0
 
@@ -247,8 +250,7 @@ def play_runner():
             
             if game_active:
                 if event.type == obstacle_timer:  # om obstacle timer har hänt
-                    #obstacle_group.add(Obstacle(choice(["fly", "snail", "dragon"])))
-                    obstacle_group.add(Obstacle(choice(["snail", "fly", "dragon"])))
+                    obstacle_group.add(Obstacle(choice(["snail", "fly", "dragon", "cat"])))
                 
                 if event.type == coin_timer:
                     coin_group.add(Coin())
