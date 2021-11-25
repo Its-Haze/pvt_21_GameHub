@@ -25,7 +25,7 @@ class Player(pygame.sprite.Sprite):
         if self.game_active:  # om game active är True
             keys = pygame.key.get_pressed()  # få en lista av alla keys som går att klicka
             if keys[pygame.K_SPACE] and self.rect.bottom >= 300:  # om mellanslaget trycks och spelaren är på y_300
-                self.gravity = -18  # hoppa med -18 pixlar från marken
+                self.gravity = -17  # hoppa med -17 pixlar från marken
             # player not walking out of frame
             if self.rect.left < 0:  # om gubben är för nära vänstra kanten av skärmen
                 self.rect.left = 0  # få den att stanna på vänstra sidan
@@ -36,11 +36,11 @@ class Player(pygame.sprite.Sprite):
             
             # player walking movement speed
             if keys[pygame.K_RIGHT]:  # om högra piltangenten klickas
-                self.rect.x += 4  # hastighet för att gå höger
+                self.rect.x += 6  # hastighet för att gå höger
                 self.moving = True
                 
             if keys[pygame.K_LEFT]:  # om vänstra piltangenten klickas
-                self.rect.x -= 4  # hastighet för att gå vänster
+                self.rect.x -= 6  # hastighet för att gå vänster
                 self.moving = True
 
     def apply_gravity(self):
