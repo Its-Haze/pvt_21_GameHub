@@ -4,9 +4,12 @@ import pygame
 
 
 def is_high_score(new_score, high_score_list):
-    for score in high_score_list:
-        if score.get('totalScore') < new_score:
-            return True
+    if len(high_score_list)< 10:
+        return True
+    else:
+        for score in high_score_list:
+            if score.get('totalScore') < new_score:
+                return True
     return False
 
 
@@ -72,6 +75,7 @@ def high_score(screen, id, score, coins, view):
     if is_high_score(score + coins, list_users):
         list_users = add_high_core(create_high_score(id, score, coins), list_users)
         data["users"] = list_users
+        save_high_score(data)
     if view:
         pygame.draw.rect(screen, (51, 153, 255), (150, 0, 500, 400))
         while True:
