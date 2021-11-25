@@ -1,7 +1,7 @@
 import pygame  # importera pygame packet
 from sys import exit  # importera function exit from modul sys
 from random import randint, choice
-
+from high_score import high_score
 
 # https://youtu.be/AY9MnQ4x3zk?t=13381
 
@@ -160,11 +160,12 @@ def display_score(start_time, test_font, screen):
     return current_time  # returnera värdet av score
 
 
-def collision_sprite(player, obstacle_group):
+def collision_sprite(player, obstacle_group, screen, score):
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, True):
         player.empty()
         player.add(Player())
         obstacle_group.empty()
+        high_score(screen, "Erik", score, 10, False)
         return False
     else:
         return True
@@ -303,7 +304,7 @@ def play_runner():
                 pass
             
             # Collision
-            game_active = collision_sprite(player, obstacle_group)
+            game_active = collision_sprite(player, obstacle_group, screen, score)
 
         if not game_active:
             screen.fill((94, 129, 162))  # fyll skärmen med färg
