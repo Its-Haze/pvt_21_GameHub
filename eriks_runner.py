@@ -101,9 +101,12 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
             cat_frame_1 = pygame.image.load("Runner_folder/graphics/cat/cat_03.png").convert_alpha()  # Ladda bild
             cat_frame_2 = pygame.image.load("Runner_folder/graphics/cat/cat_04.png").convert_alpha()  # Ladda bild
             cat_frame_3 = pygame.image.load("Runner_folder/graphics/cat/cat_05.png").convert_alpha()  # Ladda bild
-            self.frames = [cat_frame_1, cat_frame_2, cat_frame_3]
-            y_pos = 300
+            unscaled_cats = [cat_frame_1, cat_frame_2, cat_frame_3]  # original storlek poå alla frames
             
+            # list comprehension som minskar storleken på alla frames
+            self.frames = [pygame.transform.scale(i, (int(i.get_width() // 1.2), int(i.get_height() // 1.2))) for i in unscaled_cats]
+            y_pos = 300
+
         self.animation_index = 0  # vilket index som bilden vi är på ska visa
         self.image = self.frames[self.animation_index]  # image = listan av alla bilder med vilket index vi vill visa upp
         self.rect = self.image.get_rect(midbottom=(randint(800, 1100), y_pos))  # rektangeln har ett random x värde och ett y värde
