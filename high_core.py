@@ -70,12 +70,12 @@ def high_score(screen, id, score, coins, view):
     list_users = data.get('users')
     if is_high_score(score + coins, list_users):
         list_users = add_high_core(create_high_score(id, score, coins), list_users)
+        data["users"] = list_users
     if view:
         pygame.draw.rect(screen, (51, 153, 255), (150, 0, 500, 400))
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    data["users"] = list_users
                     save_high_score(data)
                     pygame.quit()
                     exit()
