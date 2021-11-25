@@ -3,6 +3,7 @@ import json
 import pygame
 
 
+
 def is_high_score(new_score, high_score_list):
     if len(high_score_list)< 10:
         return True
@@ -69,34 +70,38 @@ def list_total_high_score(screen, high_score_list: list):
 
 
 def high_score(screen, id, score, coins, view):
+    from eriks_runner import play_runner
     clock = pygame.time.Clock()
     data = get_data()
     list_users = data.get('users')
-    if is_high_score(score + coins, list_users):
-        list_users = add_high_core(create_high_score(id, score, coins), list_users)
-        data["users"] = list_users
-        save_high_score(data)
     if view:
         pygame.draw.rect(screen, (51, 153, 255), (150, 0, 500, 400))
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    save_high_score(data)
+                    #save_high_score(data)
                     pygame.quit()
                     exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         print('runner')
+                        play_runner()
 
             list_total_high_score(screen, list_users)
             pygame.display.update()
             clock.tick(60)
+    else:
+        if is_high_score(score + coins, list_users):
+            list_users = add_high_core(create_high_score(id, score, coins), list_users)
+            data["users"] = list_users
+            save_high_score(data)
 
 
 if __name__ == '__main__':
-    pygame.init()
-    pygame.display.set_caption('High Score')
-    screen = pygame.display.set_mode((800, 400))
+    #pygame.init()
+    #pygame.display.set_caption('High Score')
+    #screen = pygame.display.set_mode((800, 400))
     # high_score(screen, 'ABC', 15, 25, True)
+    pass
 
 
