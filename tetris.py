@@ -45,14 +45,14 @@ class Figure:
 
 
 class Tetris:
-    level = 2 # controlera hur snabb figur ska flytta ner
-    score = 0
-    state = "start"
-    field = []
-    height = 0
-    width = 0
-    x = 100
-    y = 60
+    level: float # controlera hur snabb figur ska flytta ner
+    score: int
+    state: str
+    field: list
+    height: int
+    width: int
+    x: int
+    y: int
     zoom = 20 # hur stor av fyrakantan in kraftnät
     figure = None
 
@@ -63,6 +63,10 @@ class Tetris:
         self.field = [] # list för att kolla om hur fingurer har fyller på skäm
         self.score = 0 # spare påäng
         self.state = "start" # status
+        self.x = 100
+        self.y = 60
+        self.level = 1.5
+
         # skapa alla värde av field lika med 0
         for i in range(height):
             new_line = []
