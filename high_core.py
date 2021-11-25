@@ -31,7 +31,8 @@ def create_high_score(user_id: str, score: int, coins: int):
 def add_high_core(high_score, high_score_list: list):
     high_score_list.append(high_score)
     high_score_list = sorted(high_score_list,key=lambda sc: sc['totalScore'], reverse=True)
-    high_score_list.pop()
+    if len(high_score_list)>= 10:
+        high_score_list.pop()
     return high_score_list
 
 
