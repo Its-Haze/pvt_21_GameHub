@@ -54,7 +54,7 @@ def start_game_hub():
 
     list_of_games = []
     runner = Game(runner_text, Image('Runner_folder/graphics/medium_runner.png', (200, 200)))
-    tetris = Game(tetris_text, Image('Tetris_folder/graphics/medium_tetris.png', (600, 200)))
+    tetris = Game(tetris_text, Image('Tetris_folder/medium_tetris.png', (600, 200)))
     list_of_games.append(runner)
     list_of_games.append(tetris)
 

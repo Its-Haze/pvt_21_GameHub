@@ -66,7 +66,7 @@ def list_total_high_score(screen, high_score_list: list):
 
 
 def high_score(screen, id, score, coins, view):
-
+    clock = pygame.time.Clock()
     data = get_data()
     list_users = data.get('users')
     if is_high_score(score + coins, list_users):
@@ -91,7 +91,6 @@ def high_score(screen, id, score, coins, view):
 
 if __name__ == '__main__':
     pygame.init()
-    clock = pygame.time.Clock()
     pygame.display.set_caption('High Score')
     screen = pygame.display.set_mode((800, 400))
     # high_score(screen, 'ABC', 15, 25, True)
