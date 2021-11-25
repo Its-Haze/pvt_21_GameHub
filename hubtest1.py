@@ -1,7 +1,7 @@
 import pygame
 from sys import exit
 from eriks_runner import play_runner
-from tetris import play_tetris
+
 
 
 class Image:
@@ -41,6 +41,7 @@ class Game:
 
 
 def start_game_hub():
+    from tetris import play_tetris
     pygame.init()
     screen = pygame.display.set_mode((800, 400))
     clock = pygame.time.Clock()
@@ -79,8 +80,6 @@ def start_game_hub():
                 if runner.image.image_rect.collidepoint(event.pos):
                     print('Klickade på runner')
                     play_runner()
-
-
         pygame.display.update()
         clock.tick(60)
 
