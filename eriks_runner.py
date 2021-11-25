@@ -132,9 +132,9 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
         if self.type != "stone":
             self.rect.x -= 7  # flytta obstacle -7 pixlar
         elif self.type == "stone":
-            print(f"rect - y: {self.rect.y}")
-            print(f"rect - x: {self.rect.x}")
-            print(f"size: {self.image.get_size()}")
+            # print(f"rect - y: {self.rect.y}")
+            # print(f"rect - x: {self.rect.x}")
+            # print(f"size: {self.image.get_size()}")
             self.rect.y += 5
         self.destroy()  # kolla om vi är utanför skärmen - DESTROY
 
