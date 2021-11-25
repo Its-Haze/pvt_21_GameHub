@@ -9,11 +9,11 @@ from random import randint, choice
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        player_walk_1 = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()  # surface - frames
-        player_walk_2 = pygame.image.load('graphics/player/player_walk_2.png').convert_alpha()  # surface - frames
+        player_walk_1 = pygame.image.load('Runner_folder/graphics/player/player_walk_1.png').convert_alpha()  # surface - frames
+        player_walk_2 = pygame.image.load('Runner_folder/graphics/player/player_walk_2.png').convert_alpha()  # surface - frames
         self.player_walk = [player_walk_1, player_walk_2]  # lista av de alla frames
         self.player_index = 0  # start index
-        self.player_jump = pygame.image.load('graphics/player/jump.png').convert_alpha()  # surface - jump
+        self.player_jump = pygame.image.load('Runner_folder/graphics/player/jump.png').convert_alpha()  # surface - jump
 
         self.image = self.player_walk[self.player_index]  # image = listan med indexed [player_index]
         self.rect = self.image.get_rect(midbottom=(80, 300))
@@ -73,21 +73,21 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
     def __init__(self, type):  # initiera klassen och lägg in en sträng vad obstacle heter
         super().__init__()  # initiera pygame.sprite.Sprite
         if type == "fly":  # om obstacle är fly
-            fly_frame_1 = pygame.image.load("graphics/Fly/Fly1.png").convert_alpha()  # Ladda bild
-            fly_frame_2 = pygame.image.load("graphics/Fly/Fly2.png").convert_alpha()  # Ladda bild
+            fly_frame_1 = pygame.image.load("Runner_folder/graphics/Fly/Fly1.png").convert_alpha()  # Ladda bild
+            fly_frame_2 = pygame.image.load("Runner_folder/graphics/Fly/Fly2.png").convert_alpha()  # Ladda bild
             self.frames = [fly_frame_1, fly_frame_2]  # spara alla bilder i en lista som heter self.frames
             y_pos = 210  # start positionen - Höjden på obstacle
         elif type == "snail":  # om obstacle är snail
-            snail_frame_1 = pygame.image.load("graphics/Snail/snail1.png").convert_alpha()  # Ladda bild
-            snail_frame_2 = pygame.image.load("graphics/Snail/snail2.png").convert_alpha()  # Ladda bild
+            snail_frame_1 = pygame.image.load("Runner_folder/graphics/Snail/snail1.png").convert_alpha()  # Ladda bild
+            snail_frame_2 = pygame.image.load("Runner_folder/graphics/Snail/snail2.png").convert_alpha()  # Ladda bild
             self.frames = [snail_frame_1, snail_frame_2]  # spara alla bilder i en lista som heter self.frames
             y_pos = 300  # start positionen - Höjden på obstacle
         elif type == "dragon": # om obstacle är dragon
-            dragon_frame_1 = pygame.image.load("graphics/dragon/Walk1.png").convert_alpha()  # Ladda bild
-            dragon_frame_2 = pygame.image.load("graphics/dragon/Walk2.png").convert_alpha()  # Ladda bild
-            dragon_frame_3 = pygame.image.load("graphics/dragon/Walk3.png").convert_alpha()  # Ladda bild
-            dragon_frame_4 = pygame.image.load("graphics/dragon/Walk4.png").convert_alpha()  # Ladda bild
-            dragon_frame_5 = pygame.image.load("graphics/dragon/Walk5.png").convert_alpha()  # Ladda bild
+            dragon_frame_1 = pygame.image.load("Runner_folder/graphics/dragon/Walk1.png").convert_alpha()  # Ladda bild
+            dragon_frame_2 = pygame.image.load("Runner_folder/graphics/dragon/Walk2.png").convert_alpha()  # Ladda bild
+            dragon_frame_3 = pygame.image.load("Runner_folder/graphics/dragon/Walk3.png").convert_alpha()  # Ladda bild
+            dragon_frame_4 = pygame.image.load("Runner_folder/graphics/dragon/Walk4.png").convert_alpha()  # Ladda bild
+            dragon_frame_5 = pygame.image.load("Runner_folder/graphics/dragon/Walk5.png").convert_alpha()  # Ladda bild
 
             # skapa en lista med alla frames i deras original storlek
             unscaled_frames = [dragon_frame_1, dragon_frame_2, dragon_frame_3, dragon_frame_4, dragon_frame_5]
@@ -151,15 +151,15 @@ def play_runner():
     # # # # Surface, Rektanglar & Fonts # # # #
 
     # Font
-    test_font = pygame.font.Font('font/Pixeltype.ttf', 50)  # loading en font
+    test_font = pygame.font.Font('Runner_folder/font/Pixeltype.ttf', 50)  # loading en font
 
     # Obstacles - kommer innehålla alla sniglar och flugor som har spawnats
 
     # Sky
-    sky_surface = pygame.image.load('graphics/Sky.png').convert()  # surface - Sky.png
+    sky_surface = pygame.image.load('Runner_folder/graphics/Sky.png').convert()  # surface - Sky.png
 
     # Ground
-    ground_surface = pygame.image.load('graphics/ground.png').convert()  # surface - ground.png
+    ground_surface = pygame.image.load('Runner_folder/graphics/ground.png').convert()  # surface - ground.png
 
     # Groups
 
@@ -170,7 +170,7 @@ def play_runner():
 
     # intro screen
     player_stand_rotate = 0  # Börjar att visa bilden utan någon rotation
-    player_stand = pygame.image.load("graphics/Player/player_stand.png").convert_alpha()  # Surface - player_stand
+    player_stand = pygame.image.load("Runner_folder/graphics/Player/player_stand.png").convert_alpha()  # Surface - player_stand
 
     game_name = test_font.render("Pixel runner", False, (111, 196, 169))  # Text surface - game_name
     game_name_rect = game_name.get_rect(center=(400, 50))  # text rect - game_name

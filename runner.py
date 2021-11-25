@@ -6,16 +6,16 @@ from sys import exit  # importera function exit from modul sys
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        player_walk1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
-        player_walk2 = pygame.image.load('graphics/Player/player_walk_2.png').convert_alpha()
+        player_walk1 = pygame.image.load('Runner_folder/graphics/Player/player_walk_1.png').convert_alpha()
+        player_walk2 = pygame.image.load('Runner_folder/graphics/Player/player_walk_2.png').convert_alpha()
         self.player_walk = [player_walk1, player_walk2]
-        self.jump = pygame.image.load('graphics/Player/jump.png').convert_alpha()
+        self.jump = pygame.image.load('Runner_folder/graphics/Player/jump.png').convert_alpha()
         self.player_index = 0
         self.image = self.player_walk[self.player_index]
         self.rect = self.image.get_rect(midbottom=(50, 300))
 
         self.gravity = 0
-        self.jump_sound = pygame.mixer.Sound('audio/jump.mp3')
+        self.jump_sound = pygame.mixer.Sound('Runner_folder/audio/jump.mp3')
         self.jump_sound.set_volume(0.5)
 
     def player_input(self):
@@ -50,13 +50,13 @@ class Obstacle(pygame.sprite.Sprite):
         super().__init__()
         y_pos = 0
         if type == 'fly':
-            fly_animation_1 = pygame.image.load('graphics/fly/Fly1.png').convert_alpha()
-            fly_animation_2 = pygame.image.load('graphics/fly/Fly2.png').convert_alpha()
+            fly_animation_1 = pygame.image.load('Runner_folder/graphics/fly/Fly1.png').convert_alpha()
+            fly_animation_2 = pygame.image.load('Runner_folder/graphics/fly/Fly2.png').convert_alpha()
             self.obstacle_frames = [fly_animation_1, fly_animation_2]
             y_pos = 210
         if type == 'snail':
-            snail_animation_1 = pygame.image.load('graphics/snail/snail1.png')  # Laddar in bilden snail1.png
-            snail_animation_2 = pygame.image.load('graphics/snail/snail2.png')  # Laddar in bilden snail1.png
+            snail_animation_1 = pygame.image.load('Runner_folder/graphics/snail/snail1.png')  # Laddar in bilden snail1.png
+            snail_animation_2 = pygame.image.load('Runner_folder/graphics/snail/snail2.png')  # Laddar in bilden snail1.png
             self.obstacle_frames = [snail_animation_1, snail_animation_2]
             y_pos = 300
         self.obstacle_index = 0
@@ -82,8 +82,8 @@ class Obstacle(pygame.sprite.Sprite):
 class Coin(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        coin_animation_1 = pygame.image.load('graphics/coins/coin1.png').convert_alpha()
-        coin_animation_2 = pygame.image.load('graphics/coins/coin2.png').convert_alpha()
+        coin_animation_1 = pygame.image.load('Runner_folder/graphics/coins/coin1.png').convert_alpha()
+        coin_animation_2 = pygame.image.load('Runner_folder/graphics/coins/coin2.png').convert_alpha()
         self.coin_frames = [coin_animation_1, coin_animation_2]
         self.coin_index = 0
         self.image = self.coin_frames[self.coin_index]
@@ -107,14 +107,14 @@ class Coin(pygame.sprite.Sprite):
 class PlayerStand(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
+        player_stand = pygame.image.load('Runner_folder/graphics/Player/player_stand.png').convert_alpha()
         self.image = pygame.transform.rotozoom(player_stand, 0, 2)
         self.rect = self.image.get_rect(center=(400, 200))
 
 
 class Instruction:
     def __init__(self, text, color, position):
-        test_font = pygame.font.Font('font/Pixeltype.ttf', 50)
+        test_font = pygame.font.Font('Runner_folder/font/Pixeltype.ttf', 50)
         self.image = test_font.render(text, False, color)
         self.rect = self.image.get_rect(center=position)
 
@@ -156,7 +156,7 @@ def collision(player, obstacles):
     """ return False om player träffar obstacle, annars  return True"""
     if obstacles:
         for obstacle in obstacles:
-            if player.colliderect(obstacle): # om player träffa obstacle
+            if player.colliderect(obstacle):  # om player träffa obstacle
                 return False
     return True
 
@@ -195,12 +195,12 @@ def player_animation(pl_surf, index):
 pygame.init()  # initiera pygame biblioteket
 screen = pygame.display.set_mode((800, 400))  # Skapa ett Pygame fönster att jobba i
 clock = pygame.time.Clock()  # Skapar en klocka från att pygame.init() kördes
-game_active = False  # variabln för att kolla om game ska köra
+game_active = False   # variabln för att kolla om game ska köra
 start_time = 0  # varibel att spara senast tiden
-bg_sound_game = pygame.mixer.Sound('audio/music.mp3')
-bg_sound_lobby = pygame.mixer.Sound('audio/lobby.wav')
-bg_sound_death = pygame.mixer.Sound('audio/death.mp3')
-bg_sound_coin = pygame.mixer.Sound('audio/coin.wav')
+bg_sound_game = pygame.mixer.Sound('Runner_folder/audio/music.mp3')
+bg_sound_lobby = pygame.mixer.Sound('Runner_folder/audio/lobby.wav')
+bg_sound_death = pygame.mixer.Sound('Runner_folder/audio/death.mp3')
+bg_sound_coin = pygame.mixer.Sound('Runner_folder/audio/coin.wav')
 bg_sound_game.set_volume(0.2)
 bg_sound_lobby.set_volume(0.05)
 bg_sound_death.set_volume(0.2)
@@ -208,8 +208,7 @@ bg_sound_coin.set_volume(0.2)
 bg_sound_lobby.play()
 # # # # Surface, Rektanglar & Fonts # # # #
 
-
-#Group
+# Group
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
@@ -237,39 +236,39 @@ obstacles_list = []  # Vi skapar listan som våra obstacles kommer ligga i
 coins_list = []  # Vi skapar listan som våra coins kommer ligga i
 
 # Sky
-sky_surface = pygame.image.load('graphics/Sky.png')  # Laddar in bilden Sky.png
+sky_surface = pygame.image.load('Runner_folder/graphics/Sky.png')  # Laddar in bilden Sky.png
 
 # Ground
-ground_surface = pygame.image.load('graphics/ground.png')  # Laddar in bilden ground.png
+ground_surface = pygame.image.load('Runner_folder/graphics/ground.png')  # Laddar in bilden ground.png
 
 # Font
-test_font = pygame.font.Font('font/Pixeltype.ttf', 50)  # loading en font
+test_font = pygame.font.Font('Runner_folder/font/Pixeltype.ttf', 50)  # loading en font
 
 # Snail
-snail_animation_1 = pygame.image.load('graphics/snail/snail1.png')  # Laddar in bilden snail1.png
-snail_animation_2 = pygame.image.load('graphics/snail/snail2.png')  # Laddar in bilden snail1.png
+snail_animation_1 = pygame.image.load('Runner_folder/graphics/snail/snail1.png')  # Laddar in bilden snail1.png
+snail_animation_2 = pygame.image.load('Runner_folder/graphics/snail/snail2.png')  # Laddar in bilden snail1.png
 snail_index = 0
 snail_animation = [snail_animation_1, snail_animation_2]
 snail_surface = snail_animation[snail_index]
 
 # Fly
-fly_animation_1 = pygame.image.load('graphics/fly/Fly1.png').convert_alpha()
-fly_animation_2 = pygame.image.load('graphics/fly/Fly2.png').convert_alpha()
+fly_animation_1 = pygame.image.load('Runner_folder/graphics/fly/Fly1.png').convert_alpha()
+fly_animation_2 = pygame.image.load('Runner_folder/graphics/fly/Fly2.png').convert_alpha()
 fly_index = 0
 fly_animation = [fly_animation_1, fly_animation_2]
 fly_surf = fly_animation[fly_index]
 
 # Coin
-coin_animation_1 = pygame.image.load('graphics/coins/coin1.png').convert_alpha()
-coin_animation_2 = pygame.image.load('graphics/coins/coin2.png').convert_alpha()
+coin_animation_1 = pygame.image.load('Runner_folder/graphics/coins/coin1.png').convert_alpha()
+coin_animation_2 = pygame.image.load('Runner_folder/graphics/coins/coin2.png').convert_alpha()
 coin_index = 0
 coin_animation = [coin_animation_1, coin_animation_2]
 coin_surf = coin_animation[coin_index]
 
 # Player
-player_walk1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
-player_walk2 = pygame.image.load('graphics/Player/player_walk_2.png').convert_alpha()
-player_jump = pygame.image.load('graphics/Player/jump.png').convert_alpha()
+player_walk1 = pygame.image.load('Runner_folder/graphics/Player/player_walk_1.png').convert_alpha()
+player_walk2 = pygame.image.load('Runner_folder/graphics/Player/player_walk_2.png').convert_alpha()
+player_jump = pygame.image.load('Runner_folder/graphics/Player/jump.png').convert_alpha()
 player_index = 0
 player_walk = [player_walk1, player_walk2]
 
@@ -333,7 +332,6 @@ while True:
                 else:
                     coin_index = 0
                 coin_surf = coin_animation[coin_index]
-
 
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
