@@ -53,7 +53,7 @@ class Tetris:
     width: int
     x: int
     y: int
-    zoom = 20 # hur stor av fyrakantan in kraftnät
+    zoom: int # hur stor av fyrakantan in kraftnät
     figure = None
 
     def __init__(self, height, width):
@@ -66,6 +66,7 @@ class Tetris:
         self.x = 100
         self.y = 60
         self.level = 1.5
+        self.zoom = 20
 
         # skapa alla värde av field lika med 0
         for i in range(height):
