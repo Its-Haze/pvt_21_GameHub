@@ -232,22 +232,30 @@ def display_score(start_time, test_font, screen):
     return current_time  # returnera värdet av score
 
 
-def collision_sprite(player, obstacle_group, screen, score, bird_group):
+def display_coins(screen, test_font, coins):
+    """ visa antal coins av användare"""
+    coins_surf = test_font.render(f'Coins: {coins}', False, (64, 64, 64))  # score font
+    coins_rect = coins_surf.get_rect(center=(100, 50))
+    screen.blit(coins_surf, coins_rect)
+
+
+
+def collision_sprite(player, obstacle_group, screen, score, bird_group, coins):
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, True):
         player.empty()
         player.add(Player())
         obstacle_group.empty()
         bird_group.empty()
-        high_score(screen, "Erik", score, 10, False)
+        high_score(screen, "coin_tester", score, coins, False)
         return False
     else:
         return True
 
 
-def collision_with_coin_sprite(player, coin_group):
+def collision_with_coin_sprite(player, coin_group, bg_sound_coin):
     if pygame.sprite.spritecollide(player.sprite, coin_group, False):
         coin_group.empty()
-        # bg_sound_coin.play(0)
+        bg_sound_coin.play(0)
         return True
     return False
 
@@ -263,6 +271,21 @@ def play_runner():
     pygame.time.Clock()
     game_active = False  # variabeln för att kolla om game ska köra
     start_time = 0  # variabel att spara senast tiden
+    
+    
+    # Sound
+    bg_sound_game = pygame.mixer.Sound('Runner_folder/audio/music.mp3')
+    bg_sound_lobby = pygame.mixer.Sound('Runner_folder/audio/lobby.wav')
+    bg_sound_death = pygame.mixer.Sound('Runner_folder/audio/death.mp3')
+    bg_sound_coin = pygame.mixer.Sound('Runner_folder/audio/coin.wav')
+    bg_sound_game.set_volume(0.2)
+    bg_sound_lobby.set_volume(0.05)
+    bg_sound_death.set_volume(0.2)
+    bg_sound_coin.set_volume(0.2)
+    bg_sound_lobby.play()
+    
+    coins = 0
+
 
     # # # # Surface, Rektanglar & Fonts # # # #
 
@@ -284,7 +307,7 @@ def play_runner():
     obstacle_group = pygame.sprite.Group()
 
     coin_group = pygame.sprite.Group()
-    
+
     bird_group = pygame.sprite.Group()
 
 
@@ -297,6 +320,7 @@ def play_runner():
     
     leaderboard_surf = pygame.image.load('Runner_folder/graphics/end_screen/button_small_leaderboard.png').convert_alpha()  # Surface - leaderboard
     leaderboard_surf_rect = leaderboard_surf.get_rect(topright=(780, 20))
+    
     # Score
     score = 0
 
@@ -349,12 +373,14 @@ def play_runner():
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
                     if leaderboard_surf_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
                         print("clicked the leaderboard!")
-                        high_score(screen, "Erik", score, 10, True)
+                        bg_sound_lobby.stop()
+                        high_score(screen, "test_coins", score, coins, True)
                         
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
                         game_active = True  # kör game igen
                         start_time = int(pygame.time.get_ticks() / 1000)  # spara tiden av sista gång
+                        coins = coins - coins
                     if event.key == pygame.K_ESCAPE:
                         start_game_hub()
                     
@@ -378,12 +404,14 @@ def play_runner():
             bird_group.draw(screen)
             bird_group.update()
             
-            if collision_with_coin_sprite(player, coin_group):
+            if collision_with_coin_sprite(player, coin_group, bg_sound_coin):
                 #bg_sound_coin.play(0)
-                pass
+                coins += 10
+                
+            display_coins(screen, test_font, coins)
             
             # Collision
-            game_active = collision_sprite(player, obstacle_group, screen, score, bird_group)
+            game_active = collision_sprite(player, obstacle_group, screen, score, bird_group, coins)
 
         if not game_active:
             screen.fill((94, 129, 162))  # fyll skärmen med färg
@@ -396,13 +424,13 @@ def play_runner():
             player_stand_rotozoom = pygame.transform.rotozoom(player_stand, player_stand_rotate, 2)  # tar en surface och roterar & förstorar bilden
             player_stand_rect = player_stand_rotozoom.get_rect(center=(400, 200))
             screen.blit(player_stand_rotozoom, player_stand_rect)  # lägg in player stand i rektangel positionen
+            
+            # coins score:
+            if coins != 0:
+                display_coins(screen, test_font, coins)
 
-            # # Återställ variablarna
-
-            # obstacle_rect_list.clear()  # töm listan av alla obstacles
-            # player_rect.midbottom = (80, 300)  # placera spelaren på plats 80, 300
-            # player_gravity = 0  # resetta spelarens gravity
-
+            
+            
             # End screen - Score / Message
             score_message = test_font.render(f"Score: {score}", False, (111, 196, 169))  # visar antalet score
             score_message_rect = score_message.get_rect(center=(400, 50))  # rektanglen av score + placering
