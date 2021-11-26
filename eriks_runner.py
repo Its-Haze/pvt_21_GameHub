@@ -226,7 +226,7 @@ class Coin(pygame.sprite.Sprite):
 def display_score(start_time, test_font, screen):
     """ visa score av användare """
     current_time = int(pygame.time.get_ticks() / 1000) - start_time  # hur långt det har gått sen pygame.init()
-    score_surf = test_font.render(f'Score: {current_time}', False, (64, 64, 64))  # objektet av score
+    score_surf = test_font.render(f'Score: {current_time}', False, (255, 255, 102))  # objektet av score
     score_rect = score_surf.get_rect(center=(400, 50))  # rektanglen av objektet score
     screen.blit(score_surf, score_rect)  # skriver ut på skärmen varje gång funktionen körs
     return current_time  # returnera värdet av score
@@ -234,10 +234,9 @@ def display_score(start_time, test_font, screen):
 
 def display_coins(screen, test_font, coins):
     """ visa antal coins av användare"""
-    coins_surf = test_font.render(f'Coins: {coins}', False, (64, 64, 64))  # score font
+    coins_surf = test_font.render(f'Coins: {coins}', False, (255, 255, 102))  # score font
     coins_rect = coins_surf.get_rect(center=(100, 50))
     screen.blit(coins_surf, coins_rect)
-
 
 
 def collision_sprite(player, obstacle_group, screen, score, bird_group, coins):
@@ -246,7 +245,7 @@ def collision_sprite(player, obstacle_group, screen, score, bird_group, coins):
         player.add(Player())
         obstacle_group.empty()
         bird_group.empty()
-        high_score(screen, "coin_tester", score, coins, False)
+        high_score('runner', screen, "coin_tester", (score, coins), False)
         return False
     else:
         return True
@@ -300,6 +299,14 @@ def play_runner():
     # Ground
     ground_surface = pygame.image.load('Runner_folder/graphics/ground.png').convert()  # surface - ground.png
 
+    # Background Forest
+    background_list = [pygame.image.load('Runner_folder/graphics/background/Cartoon_Forest_BG_01.png').convert_alpha(),
+                       pygame.image.load('Runner_folder/graphics/background/Cartoon_Forest_BG_02.png').convert_alpha(),
+                       pygame.image.load('Runner_folder/graphics/background/Cartoon_Forest_BG_03.png').convert_alpha(),
+                       pygame.image.load('Runner_folder/graphics/background/Cartoon_Forest_BG_04.png').convert_alpha()]
+
+    forest_surface = background_list[randint(0, len(background_list) - 1)]  # Laddar in bilden Forest1.png
+
     # Groups
     player = pygame.sprite.GroupSingle()
     player.add(Player())
@@ -343,8 +350,7 @@ def play_runner():
     
     bird_timer = pygame.USEREVENT + 5
     pygame.time.set_timer(bird_timer, 7000)
-    
-    
+
     
     # # # # # GAME LOOP # # # # #
     while True:
@@ -374,7 +380,8 @@ def play_runner():
                     if leaderboard_surf_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
                         print("clicked the leaderboard!")
                         bg_sound_lobby.stop()
-                        high_score(screen, "test_coins", score, coins, True)
+                        high_score('runner', screen, "test_coins", (score, coins), True)
+
                         
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
@@ -386,6 +393,7 @@ def play_runner():
                     
         if game_active:
             screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
+            screen.blit(forest_surface, (0, 0))
             screen.blit(ground_surface, (0, 300))  # sätter marken på skärmen  - Lager 2
             score = display_score(start_time, test_font, screen)  # Sätter retur värdet av funktionen till score
 
@@ -444,6 +452,7 @@ def play_runner():
 
             game_instruction_rect = game_instruction.get_rect(center=(400, 350))
             screen.blit(game_instruction, game_instruction_rect)  # lägg meddelandet att starta om spelet
+
 
         pygame.display.update()  # uppdaterar skärmen [pygame window]
         clock.tick(60)  # hur snabb program kör [60 fps]

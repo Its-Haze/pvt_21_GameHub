@@ -263,7 +263,7 @@ def play_tetris():
         draw_freeze_figures(colors, game, screen)
         draw_figure(colors, game, screen)
         # skapa alla text för att visa
-        font = pygame.font.SysFont('comicsans', 25, True, False)  # font för text
+        font = pygame.font.SysFont('font/Pixeltype.ttf', 25, True, False)  # font för text
         text = font.render("Score: " + str(game.score), True, 'Black')  #
         screen.blit(text, [0, 0])
         if not game.game_active:
