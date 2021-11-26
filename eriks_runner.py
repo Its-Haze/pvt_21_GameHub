@@ -389,6 +389,7 @@ def play_runner():
                         start_time = int(pygame.time.get_ticks() / 1000)  # spara tiden av sista gång
                         coins = coins - coins
                     if event.key == pygame.K_ESCAPE:
+                        bg_sound_lobby.stop()
                         start_game_hub()
                     
         if game_active:
@@ -432,7 +433,7 @@ def play_runner():
             player_stand_rotozoom = pygame.transform.rotozoom(player_stand, player_stand_rotate, 2)  # tar en surface och roterar & förstorar bilden
             player_stand_rect = player_stand_rotozoom.get_rect(center=(400, 200))
             screen.blit(player_stand_rotozoom, player_stand_rect)  # lägg in player stand i rektangel positionen
-            
+            forest_surface = background_list[randint(0, len(background_list) - 1)]
             # coins score:
             if coins != 0:
                 display_coins(screen, test_font, coins)
