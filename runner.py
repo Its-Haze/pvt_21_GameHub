@@ -55,8 +55,10 @@ class Obstacle(pygame.sprite.Sprite):
             self.obstacle_frames = [fly_animation_1, fly_animation_2]
             y_pos = 210
         if type == 'snail':
-            snail_animation_1 = pygame.image.load('Runner_folder/graphics/snail/snail1.png')  # Laddar in bilden snail1.png
-            snail_animation_2 = pygame.image.load('Runner_folder/graphics/snail/snail2.png')  # Laddar in bilden snail1.png
+            snail_animation_1 = pygame.image.load(
+                'Runner_folder/graphics/snail/snail1.png')  # Laddar in bilden snail1.png
+            snail_animation_2 = pygame.image.load(
+                'Runner_folder/graphics/snail/snail2.png')  # Laddar in bilden snail1.png
             self.obstacle_frames = [snail_animation_1, snail_animation_2]
             y_pos = 300
         self.obstacle_index = 0
@@ -126,7 +128,7 @@ class Instruction:
 def display_score():
     """ visa score av användare"""
     current_time = (pygame.time.get_ticks() - start_time) // 1000  # score
-    score_surf = test_font.render(f'Score: {current_time}', False, (64, 64, 64))  # score font
+    score_surf = test_font.render(f'Score: {current_time}', False, (255, 255, 102))  # score font
     score_rect = score_surf.get_rect(center=(400, 50))
     screen.blit(score_surf, score_rect)
     return current_time
@@ -134,7 +136,7 @@ def display_score():
 
 def display_coins():
     """ visa antal coins av användare"""
-    coins_surf = test_font.render(f'Coins: {coins}', False, (64, 64, 64))  # score font
+    coins_surf = test_font.render(f'Coins: {coins}', False, (255, 255, 102))  # score font
     coins_rect = coins_surf.get_rect(center=(600, 50))
     screen.blit(coins_surf, coins_rect)
 
@@ -198,12 +200,13 @@ def player_animation(pl_surf, index):
         pl_surf = player_walk[int(index)]
     return pl_surf, index
 
+
 # # # # Aktivera Pygame # # # #
 
 pygame.init()  # initiera pygame biblioteket
 screen = pygame.display.set_mode((800, 400))  # Skapa ett Pygame fönster att jobba i
 clock = pygame.time.Clock()  # Skapar en klocka från att pygame.init() kördes
-game_active = False   # variabln för att kolla om game ska köra
+game_active = False  # variabln för att kolla om game ska köra
 start_time = 0  # varibel att spara senast tiden
 bg_sound_game = pygame.mixer.Sound('Runner_folder/audio/music.mp3')
 bg_sound_lobby = pygame.mixer.Sound('Runner_folder/audio/lobby.wav')
@@ -232,7 +235,7 @@ pygame.time.set_timer(obstacle_timer, 1500)  # Vi bestämmer hur ofta pygame ska
 snail_timer = pygame.USEREVENT + 2  # Vi skapar en timer för att välja hur ofta bilden på snigeln skall bytas ut - detta skapar en animering
 pygame.time.set_timer(snail_timer, 500)
 
-fly_timer = pygame.USEREVENT + 3 # Vi skapar en timer för att animera flugan
+fly_timer = pygame.USEREVENT + 3  # Vi skapar en timer för att animera flugan
 pygame.time.set_timer(fly_timer, 200)
 
 coin_timer = pygame.USEREVENT + 4  # Vi skapar en timer för att välja hur ofta bilden på coin skall bytas ut - detta skapar en animering
@@ -249,6 +252,15 @@ sky_surface = pygame.image.load('Runner_folder/graphics/Sky.png')  # Laddar in b
 
 # Ground
 ground_surface = pygame.image.load('Runner_folder/graphics/ground.png')  # Laddar in bilden ground.png
+
+# Background Forest
+
+background_list = [pygame.image.load('Runner_folder/graphics/background/Cartoon_Forest_BG_01.png').convert_alpha(),
+                   pygame.image.load('Runner_folder/graphics/background/Cartoon_Forest_BG_02.png').convert_alpha(),
+                   pygame.image.load('Runner_folder/graphics/background/Cartoon_Forest_BG_03.png').convert_alpha(),
+                   pygame.image.load('Runner_folder/graphics/background/Cartoon_Forest_BG_04.png').convert_alpha()]
+
+forest_surface = background_list[randint(0, len(background_list)-1)]  # Laddar in bilden Forest1.png
 
 # Font
 test_font = pygame.font.Font('Runner_folder/font/Pixeltype.ttf', 50)  # loading en font
@@ -352,7 +364,7 @@ while True:
 
     if game_active:
         screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
-
+        screen.blit(forest_surface, (0, 0))
         screen.blit(ground_surface, (0, 300))  # sätter marken på skärmen  - Lager 2
 
         score = display_score()
@@ -392,17 +404,17 @@ while True:
             instructions[2].draw_instruction(screen)
             # display_pre_score(score)
             # instructions_surf = test_font.render('Press space to play again', False, 'Black')
-        #instructions_rect = instructions_surf.get_rect(center=(400, 350))
+        # instructions_rect = instructions_surf.get_rect(center=(400, 350))
         player_stand = pygame.sprite.GroupSingle()
         player_stand.add(PlayerStand())
         player_stand.draw(screen)
-        #player_rotate -= 4
+        # player_rotate -= 4
         #
         # _player_stand = pygame.transform.rotozoom(player_stand, player_rotate,
         #                                           2)  # Tar en bild och gör den större eller rotera den.
         # player_stand_rect = _player_stand.get_rect(center=(400, 200))
-        #screen.blit(_player_stand, player_stand_rect)
-        #screen.blit(instructions_surf, instructions_rect)
+        # screen.blit(_player_stand, player_stand_rect)
+        # screen.blit(instructions_surf, instructions_rect)
         obstacles_list.clear()  # Tömmer listan när spelaren har förlorat
 
     pygame.display.update()  # uppdaterar skärmen [pygame window]
