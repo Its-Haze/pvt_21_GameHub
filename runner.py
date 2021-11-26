@@ -104,6 +104,7 @@ class Coin(pygame.sprite.Sprite):
         if self.rect.y > 300:
             self.kill()
 
+
 class PlayerStand(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -129,6 +130,13 @@ def display_score():
     score_rect = score_surf.get_rect(center=(400, 50))
     screen.blit(score_surf, score_rect)
     return current_time
+
+
+def display_coins():
+    """ visa antal coins av användare"""
+    coins_surf = test_font.render(f'Coins: {coins}', False, (64, 64, 64))  # score font
+    coins_rect = coins_surf.get_rect(center=(600, 50))
+    screen.blit(coins_surf, coins_rect)
 
 
 def display_pre_score(score):
@@ -206,6 +214,7 @@ bg_sound_lobby.set_volume(0.05)
 bg_sound_death.set_volume(0.2)
 bg_sound_coin.set_volume(0.2)
 bg_sound_lobby.play()
+coins = 0
 # # # # Surface, Rektanglar & Fonts # # # #
 
 # Group
@@ -339,6 +348,7 @@ while True:
                 bg_sound_lobby.stop()
                 bg_sound_game.play()
                 start_time = pygame.time.get_ticks()  # spara tiden av sista gång
+                coins = 0
 
     if game_active:
         screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
@@ -346,6 +356,7 @@ while True:
         screen.blit(ground_surface, (0, 300))  # sätter marken på skärmen  - Lager 2
 
         score = display_score()
+        display_coins()
         # obstacles_list = obstacle_movement(obstacles_list) # anropa function obstacle_movement
         # game_active = collision(player_rect, obstacles_list) # anropa function collision
         # player
@@ -365,6 +376,7 @@ while True:
         game_active = collision_sprite()
         if collision_with_coin_sprite():
             bg_sound_coin.play(0)
+            coins = coins + 1
 
     else:
         screen.fill((94, 129, 162))
