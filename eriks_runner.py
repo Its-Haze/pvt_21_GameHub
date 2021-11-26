@@ -373,6 +373,7 @@ def play_runner():
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
                     if leaderboard_surf_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
                         print("clicked the leaderboard!")
+                        bg_sound_lobby.stop()
                         high_score(screen, "test_coins", score, coins, True)
                         
                 if event.type == pygame.KEYDOWN:
