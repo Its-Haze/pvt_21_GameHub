@@ -1,7 +1,8 @@
 import pygame  # https://levelup.gitconnected.com/writing-tetris-in-python-2a16bddb5318
 import random
 from sys import exit
-from hubtest1 import start_game_hub
+from hubtest1 import start_game_hub, Image, Text
+from high_score import high_score
 
 # alla färg av figur
 
@@ -49,7 +50,7 @@ class Figure:
 class Tetris:
     level: float  # controlera hur snabb figur ska flytta ner
     score: int
-    game_active: bool
+    active: bool
     field: list
     height: int
     width: int
@@ -59,17 +60,18 @@ class Tetris:
     figure: Figure
 
     def __init__(self, height, width):
-        self.figure = Figure(3, 0)
+        self.figure = Figure(5, 0)
         """ Skapa en teris """
         self.height = height  # hög av Teris skäm
         self.width = width  # lengd av Teris skäm
         self.field = []  # list för att kolla om hur fingurer har fyller på skäm
         self.score = 0  # spare påäng
-        self.game_active = True  # status
-        self.x = 100
-        self.y = 60
+        self.active = True  # status
+        self.x = 60
+        self.y = 38
         self.level = 1.5
         self.zoom = 20
+        self.game_over = False
 
         # skapa alla värde av field lika med 0
         for i in range(height):
@@ -80,7 +82,7 @@ class Tetris:
 
     def new_figure(self):
         """ Skapa en new figur"""
-        self.figure = Figure(3, 0)
+        self.figure = Figure(5, 0)
 
     def intersects(self):
         """ kolla om figur får röra sig """
@@ -135,7 +137,8 @@ class Tetris:
         self.break_lines()
         self.new_figure()
         if self.intersects():  # om alla markerad är det fullt
-            self.game_active = False
+            self.active = False
+            self.game_over = True
 
     def go_side(self, dx):
         """ Figure flytter till vänster (dx negative) eller höger (positive) beror på hur dx blir
@@ -169,7 +172,7 @@ def draw_freeze_figures(colors, game, screen):
     for i in range(game.height):
         for j in range(game.width):
             # rita kraftnät med färg Gray och börja på position Teris skäm
-            pygame.draw.rect(screen, 'Grey', [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom],
+            pygame.draw.rect(screen, (204, 102, 0), [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom],
                              1)
             if game.field[i][j] > 0:
                 # rita alla figurer som har redan ligger nedan: type rect(screen, färg, x, y, width, hight)
@@ -190,34 +193,6 @@ def draw_figure(colors, game, screen):
                                      [game.x + game.zoom * (j + game.figure.x) + 1,
                                       game.y + game.zoom * (i + game.figure.y) + 1,
                                       game.zoom - 2, game.zoom - 2])
-
-
-def event_driver(game, pressing_down):
-    """ Event driver, return pressing_down if user press down arrow on keyboard"""
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:  # k_up för att rotera
-                game.rotate()
-            if event.key == pygame.K_DOWN:  # k_down för att gå ner (markera pressing_down = True
-                pressing_down = True
-            if event.key == pygame.K_LEFT:  # k_left för att gå till vänster
-                game.go_side(-1)
-            if event.key == pygame.K_RIGHT:  # k_right för att gå till höger
-                game.go_side(1)
-            if event.key == pygame.K_SPACE:  # k_space för att gå längst ner
-                game.go_space()
-            if event.key == pygame.K_ESCAPE:  # k_esc för att spela om
-                start_game_hub()
-            if event.key == pygame.K_r:
-                game.__init__(20, 10)
-
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_DOWN:  # om användare släpa k_down så markera pressing_down = False
-                pressing_down = False
-    return pressing_down
 
 
 def play_tetris():
@@ -241,12 +216,22 @@ def play_tetris():
 
     clock = pygame.time.Clock()
     fps = 25
-    game = Tetris(20, 10)  # skapa en Teris skäm med hight = 20, width = 10
+    game = Tetris(21, 14)  # skapa en Teris skäm med hight = 20, width = 10
     counter = 0
 
     pressing_down = False
 
     while True:
+        game.game_over = False
+        screen.fill('White')  # fill färg för hela skäm
+        back_ground_img = Image('Tetris_folder/background.jpg', (200, 0))
+        back_ground_img.draw(screen)
+        high_score_image = Image('Tetris_folder/high_score.png', (370, 10))
+
+        image_surface = pygame.image.load('Tetris_folder/menu.png').convert_alpha()
+        image_rect = image_surface.get_rect(topleft=(10, 5))
+        screen.blit(image_surface, image_rect)
+
         if game.figure is None:  # om det finns ingen figur (börja play)
             game.new_figure()  # skapa en ny figur
         counter += 1
@@ -254,20 +239,55 @@ def play_tetris():
             counter = 0
         # om användare trycker på k_down eller det gå ner automat förlja counters värde
         if counter % (fps // game.level // 2) == 0 or pressing_down:
-            if game.game_active:
+            if game.active:
                 game.go_down()
 
-        pressing_down = event_driver(game, pressing_down)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if game.active:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:  # k_up för att rotera
+                        game.rotate()
+                    if event.key == pygame.K_DOWN:  # k_down för att gå ner (markera pressing_down = True
+                        pressing_down = True
+                    if event.key == pygame.K_LEFT:  # k_left för att gå till vänster
+                        game.go_side(-1)
+                    if event.key == pygame.K_RIGHT:  # k_right för att gå till höger
+                        game.go_side(1)
+                    if event.key == pygame.K_SPACE:  # k_space för att gå längst ner
+                        game.go_space()
+                    if event.key == pygame.K_ESCAPE:  # k_esc för att spela om
+                        start_game_hub()
+                    if event.key == pygame.K_r:
+                        game.__init__(20, 10)
 
-        screen.fill('White')  # fill färg för hela skäm
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_DOWN:  # om användare släpa k_down så markera pressing_down = False
+                        pressing_down = False
+
+            else:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if high_score_image.image_rect.collidepoint(event.pos):
+                        high_score('tetris', screen, 'id1', (15, 0), True)
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if image_rect.collidepoint(event.pos):
+                    start_game_hub()
+
         draw_freeze_figures(colors, game, screen)
         draw_figure(colors, game, screen)
         # skapa alla text för att visa
-        font = pygame.font.SysFont('font/Pixeltype.ttf', 25, True, False)  # font för text
-        text = font.render("Score: " + str(game.score), True, 'Black')  #
-        screen.blit(text, [0, 0])
-        if not game.game_active:
+        score = Text(f'Score: {game.score}', (200, 0), 'Yellow', 25)
+        score.draw(screen)
+
+        if not game.active:
+            high_score_image.draw(screen)
             game_over(screen)
+            check = True
+            if game.game_over:
+                high_score('tetris', screen, 'id1', (game.score, 0), False)
 
         pygame.display.flip()
         clock.tick(fps)

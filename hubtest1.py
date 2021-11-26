@@ -3,7 +3,6 @@ from sys import exit
 from eriks_runner import play_runner
 
 
-
 class Image:
     def __init__(self, image_url, pos):
         self.image_surface = pygame.image.load(image_url).convert_alpha()
@@ -14,10 +13,10 @@ class Image:
 
 
 class Text:
-    def __init__(self, text, pos, color):
+    def __init__(self, text, pos, color, size):
         self.text = text
         self.color = color
-        self.font = pygame.font.SysFont('Comic Sans MS', 40)
+        self.font = pygame.font.SysFont('Comic Sans MS', size)
         self.text_surface = self.font.render(self.text, False, self.color)
         self.text_rect = self.text_surface.get_rect(midtop=pos)
 
@@ -49,18 +48,18 @@ def start_game_hub():
 
     pygame.font.init()  # Behövs för att initiera fonts
 
-    menu_text = Text('Game hub', (400, 50), 'White')
-    runner_text = Text('Runner', (200, 150), 'White')
-    tetris_text = Text('Tetris', (600, 150), 'White')
+    menu_text = Text('Game hub', (400, 50), 'White', 40)
+    runner_text = Text('Runner', (220, 130), 'White', 40)
+    tetris_text = Text('Tetris', (580, 130), 'White', 40)
 
     list_of_games = []
-    runner = Game(runner_text, Image('Runner_folder/graphics/medium_runner.png', (200, 200)))
-    tetris = Game(tetris_text, Image('Tetris_folder/medium_tetris.png', (600, 200)))
+    runner = Game(runner_text, Image('Runner_folder/graphics/medium_runner.png', (220, 200)))
+    tetris = Game(tetris_text, Image('Tetris_folder/medium_tetris.png', (580, 200)))
     list_of_games.append(runner)
     list_of_games.append(tetris)
 
     while running:
-        screen.fill('Black')
+        screen.fill((0, 103, 103))
         # Change screen to the current game
         menu_text.draw(screen)
         for game in list_of_games:

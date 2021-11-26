@@ -2,10 +2,11 @@ import json
 
 import pygame
 
-
 def is_high_score(all_score: tuple, high_score_list, game_name: str):
     score, * coins = all_score
     new_score = score + coins[0]
+    if not new_score:
+        return False
     if len(high_score_list) < 10:
         return True
     else:
@@ -38,7 +39,7 @@ def save_high_score(data: dict, game_name: str):
         with open('high_score.json', 'w') as f:
             json.dump(data, f)
     if game_name == 'tetris':
-        with open('high_score.json', 'w') as f:
+        with open('Tetris_folder/high_score_tetris.json', 'w') as f:
             json.dump(data, f)
 
 
@@ -57,7 +58,7 @@ def add_high_core(high_score, high_score_list: list, game_name: str):
     if game_name == 'runner':
         high_score_list = sorted(high_score_list, key=lambda sc: sc['totalScore'], reverse=True)
     if game_name == 'tetris':
-        high_score_list = sorted(high_score_list, key=lambda sc: sc['totalScore'], reverse=True)
+        high_score_list = sorted(high_score_list, key=lambda sc: sc['score'], reverse=True)
     if len(high_score_list) >= 10:
         high_score_list.pop()
     return high_score_list
@@ -87,25 +88,32 @@ def list_total_high_score_runner(screen, high_score_list: list):
 
 
 def list_total_high_score_tetris(screen, high_score_list: list):
-    draw_text(screen, 'High Score', 'Green', (400, 50))
-    draw_text(screen, 'User Id', (64, 64, 64), (300, 100))
-    draw_text(screen, 'Score', (64, 64, 64), (500, 100))
+    draw_text(screen, 'High Score', (153, 0, 0), (200, 50))
+    draw_text(screen, 'User Id', (204, 102, 0), (120, 100))
+    draw_text(screen, 'Score', (204, 102, 0), (270, 100))
     y = 0
-    print(high_score_list)
     high_score_list = sorted(high_score_list, key=lambda sc: sc['score'], reverse=True)
     for score in high_score_list:
-        draw_text(screen, f'{score.get("id")}', 'Grey', (300, 150 + y))
-        draw_text(screen, f'{score.get("score")}', 'Grey', (500, 150 + y))
+        draw_text(screen, f'{score.get("id")}', (155, 128, 0), (120, 150 + y))
+        draw_text(screen, f'{score.get("score")}', (155, 128, 0), (270, 150 + y))
         y += 50
 
 
 def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
+    from tetris import play_tetris
     from eriks_runner import play_runner
     clock = pygame.time.Clock()
     data = get_data(game_name)
     list_users = data.get('users')
+    image_rect = pygame.rect
     if view:
-        pygame.draw.rect(screen, (94, 129, 162), (0, 0, 800, 400))
+        if game_name == 'runner':
+            pygame.draw.rect(screen, (94, 129, 162), (0, 0, 800, 400))
+        if game_name == 'tetris':
+            image_surface = pygame.image.load('Tetris_folder/back_arrow.png').convert_alpha()
+            image_rect = image_surface.get_rect(topleft=(5, 5))
+            screen.blit(image_surface, image_rect)
+
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -116,6 +124,13 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
                     if event.key == pygame.K_ESCAPE:
                         if game_name == 'runner':
                             play_runner()
+                        if game_name == 'tetris':
+                            play_tetris()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if image_rect.collidepoint(event.pos):
+                        if game_name == 'tetris':
+                            play_tetris()
+
             if game_name == 'runner':
                 list_total_high_score_runner(screen, list_users)
             if game_name == 'tetris':
@@ -131,10 +146,10 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
 
 
 if __name__ == '__main__':
-    pygame.init()
-    pygame.display.set_caption('High Score')
-    screen = pygame.display.set_mode((800, 400))
-    high_score('tetris', screen, 'id1', (15, 0), True)
+    # pygame.init()
+    # pygame.display.set_caption('High Score')
+    # screen = pygame.display.set_mode((800, 400))
+    # high_score('tetris', screen, 'id1', (15, 0), True)
     pass
 
 
