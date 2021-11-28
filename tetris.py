@@ -6,7 +6,6 @@ from high_score import high_score
 
 # alla färg av figur
 
-
 class Figure:
     """Class Figure"""
     x = 0  # figur x position
@@ -72,6 +71,12 @@ class Tetris:
         self.level = 1.5
         self.zoom = 20
         self.game_over = False
+        self.bg_sound_rotate = pygame.mixer.Sound('Tetris_folder/audio/rotate.mp3')
+        self.bg_sound_drop = pygame.mixer.Sound('Tetris_folder/audio/drop.mp3')
+        self.bg_sound_line = pygame.mixer.Sound('Tetris_folder/audio/line.mp3')
+        self.bg_sound_rotate.set_volume(0.2)
+        self.bg_sound_line.set_volume(0.2)
+        self.bg_sound_drop.set_volume(0.2)
 
         # skapa alla värde av field lika med 0
         for i in range(height):
@@ -107,6 +112,7 @@ class Tetris:
                 if self.field[i][j] == 0:  # kolla om field[i][j] int har fyllt
                     zeros += 1
             if zeros == 0:  # om hel råden är fylld, då tar det bort råden
+                self.bg_sound_line.play(0)
                 lines += 1
                 # ta det bort raden
                 for i1 in range(i, 1, -1):
@@ -114,8 +120,10 @@ class Tetris:
                         self.field[i1][j] = self.field[i1 - 1][j]
         self.score += lines ** 2  # räkna score = lines^2
 
+
     def go_space(self):
         """ figur ska flytta sig ner till om det går när användare tryck på mellanslag"""
+        self.bg_sound_drop.play(0)
         while not self.intersects():  # loop till det går
             self.figure.y += 1
         self.figure.y -= 1
@@ -151,6 +159,7 @@ class Tetris:
 
     def rotate(self):
         """rotera figure"""
+        self.bg_sound_rotate.play(0)
         old_rotation = self.figure.rotation  # spara rotation innan flytt
         self.figure.rotate()  # rotera figure
         if self.intersects():  # om det blir genomskärs, rotera inte
@@ -165,7 +174,6 @@ def game_over(screen):
     text_game_over1 = font1.render("Press R", True, (255, 215, 0))
     screen.blit(text_game_over, [20, 200])
     screen.blit(text_game_over1, [25, 265])
-
 
 def draw_freeze_figures(colors, game, screen):
     """ Rita kraftnät och rita alla figur som har redan körd"""
@@ -220,6 +228,12 @@ def play_tetris():
     counter = 0
 
     pressing_down = False
+
+    bg_sound_background = pygame.mixer.Sound('Tetris_folder/audio/background.mp3')
+    bg_sound_gameover = pygame.mixer.Sound('Tetris_folder/audio/over.mp3')
+    bg_sound_gameover.set_volume(0.2)
+    bg_sound_background.set_volume(0.2)
+    bg_sound_background.play()
 
     while True:
         game.game_over = False
@@ -287,6 +301,9 @@ def play_tetris():
             game_over(screen)
             check = True
             if game.game_over:
+                bg_sound_gameover.play(0)
+                pygame.time.wait(2000)
+                bg_sound_background.stop()
                 high_score('tetris', screen, 'id1', (game.score, 0), False)
 
         pygame.display.flip()
