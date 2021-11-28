@@ -58,6 +58,10 @@ def start_game_hub():
     list_of_games.append(runner)
     list_of_games.append(tetris)
 
+    bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
+    bg_sound_hub.set_volume(0.2)
+    bg_sound_hub.play()
+
     while running:
         screen.fill((0, 103, 103))
         # Change screen to the current game
@@ -75,9 +79,11 @@ def start_game_hub():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if tetris.image.image_rect.collidepoint(event.pos):
                     print('Klickade på tetris')
+                    bg_sound_hub.stop()
                     play_tetris()
                 if runner.image.image_rect.collidepoint(event.pos):
                     print('Klickade på runner')
+                    bg_sound_hub.stop()
                     play_runner()
         pygame.display.update()
         clock.tick(60)
