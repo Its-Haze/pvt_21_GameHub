@@ -1,6 +1,8 @@
 import pygame
 from sys import exit
 from eriks_runner import play_runner
+from tetris import play_tetris
+from Space_Invaders_Game.main import play_space_invaders
 
 
 class Image:
@@ -40,7 +42,6 @@ class Game:
 
 
 def start_game_hub():
-    from tetris import play_tetris
     pygame.init()
     screen = pygame.display.set_mode((800, 400))
     clock = pygame.time.Clock()
@@ -87,6 +88,7 @@ def start_game_hub():
                     print('Klickade på runner')
                     bg_sound_hub.stop()
                     play_runner()
+                    #play_space_invaders()
         pygame.display.update()
         clock.tick(60)
 

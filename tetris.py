@@ -1,7 +1,6 @@
 import pygame  # https://levelup.gitconnected.com/writing-tetris-in-python-2a16bddb5318
 import random
 from sys import exit
-from hubtest1 import start_game_hub, Image, Text
 from high_score import high_score
 
 # alla färg av figur
@@ -205,6 +204,7 @@ def draw_figure(colors, game, screen):
 
 
 def play_tetris():
+    from hubtest1 import start_game_hub, Image, Text
     """ Function run tetris game"""
     colors = [
         (0, 0, 0),
@@ -274,6 +274,7 @@ def play_tetris():
                     if event.key == pygame.K_SPACE:  # k_space för att gå längst ner
                         game.go_space()
                     if event.key == pygame.K_ESCAPE:  # k_esc för att spela om
+                        bg_sound_background.stop()
                         start_game_hub()
                     if event.key == pygame.K_r:
                         game.__init__(20, 10)

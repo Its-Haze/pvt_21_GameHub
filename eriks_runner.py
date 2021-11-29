@@ -266,7 +266,7 @@ def play_runner():
     bg_sound_lobby.set_volume(0.05)
     bg_sound_death.set_volume(0.2)
     bg_sound_coin.set_volume(0.2)
-    bg_sound_lobby.play()
+    bg_sound_lobby.play(-1)
 
     coins = 0
 
@@ -355,7 +355,9 @@ def play_runner():
                 if event.type == pygame.KEYDOWN:  # om knappen har tryckts ner
                     if event.key == pygame.K_ESCAPE:
                         print("ESC")
+                        bg_sound_lobby.stop()
                         start_game_hub()
+                        
 
             if not game_active:
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
