@@ -31,12 +31,12 @@ class Player(pygame.sprite.Sprite):
                 self.rect.right = 800  # få den att stanna på högra sidan
 
             self.moving = False  # sätt den till false varje gång vi kör uppdaterar player_move
-            
+
             # player walking movement speed
             if keys[pygame.K_RIGHT]:  # om högra piltangenten klickas
                 self.rect.x += 6  # hastighet för att gå höger
                 self.moving = True
-                
+
             if keys[pygame.K_LEFT]:  # om vänstra piltangenten klickas
                 self.rect.x -= 6  # hastighet för att gå vänster
                 self.moving = True
@@ -60,48 +60,56 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.image = self.player_walk[0]  # om spelaren inte rör sig
 
+    def player_x_pos(self):
+        return self.rect.x
+
     def update(self):
         """ Update the methods of the class """
+        print(f"rect - y: {self.rect.y}")
+        print(f"rect - x: {self.rect.x}")
+        print(f"size: {self.image.get_size()}")
         self.player_move()  # Update player_move
         self.apply_gravity()  # Update apply_gravity
         self.animation_state()  # Update animation state
 
 
 class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
-    def __init__(self, type):  # initiera klassen och lägg in en sträng vad obstacle heter
+    def __init__(self, type, player_pos_x):  # initiera klassen och lägg in en sträng vad obstacle heter
         super().__init__()  # initiera pygame.sprite.Sprite
         self.type = type
+        self.player_pos_x = player_pos_x
         if self.type == "fly":  # om obstacle är fly
             self.frames = [pygame.image.load(f"Runner_folder/graphics/Fly/Fly{i}.png").convert_alpha() for i in range(1, 3)]
             y_pos = 210  # start positionen - Höjden på obstacle
             x_pos = randint(800, 1100)
-            
+
         elif self.type == "snail":  # om obstacle är snail
             self.frames = [pygame.image.load(f"Runner_folder/graphics/Snail/snail{i}.png").convert_alpha() for i in range(1, 3)]
             y_pos = 300  # start positionen - Höjden på obstacle
             x_pos = randint(800, 1100)
-            
+
         elif self.type == "dragon": # om obstacle är dragon
             unscaled_frames = [pygame.image.load(f"Runner_folder/graphics/dragon/Walk{i}.png").convert_alpha() for i in range(1, 6)]
             # skapa en list comprehension som skalar ner alla bildernas storlek med 1,5
             self.frames = [pygame.transform.scale(i, (int(i.get_width() // 1.5), int(i.get_height() // 1.5))) for i in unscaled_frames]
             y_pos = 300  # start positionen - Höjden på obstacle
             x_pos = randint(800, 1100)
-            
+
         elif self.type == "cat":
             unscaled_cats = [pygame.image.load(f"Runner_folder/graphics/cat/cat_{i}.png").convert_alpha() for i in range(1, 4)]
             # list comprehension som minskar storleken på alla frames
             self.frames = [pygame.transform.scale(i, (int(i.get_width() // 1.2), int(i.get_height() // 1.2))) for i in unscaled_cats]
             y_pos = 300
             x_pos = randint(800, 1100)
-            
+
         elif self.type == "stone":
             unscaled_stones = [pygame.image.load("Runner_folder/graphics/stone/stone.png").convert_alpha() for i in range(1, 3)]
             self.frames = [pygame.transform.scale(i, (int(i.get_width() // 2), int(i.get_height() // 2))) for i in unscaled_stones]
-            y_pos = -100
-            x_pos = randint(50, 750)
+            y_pos = -20
+            # x_pos = nuvarande x position av spelaren och spawna stenen ovanför spelaren
+            x_pos = self.player_pos_x + 30
 
-        self.animation_index = 0  # vilket index som bilden vi är på ska visa
+        self.animation_index = 0  # vilket index     som bilden vi är på ska visa
         self.image = self.frames[self.animation_index]  # image = listan av alla bilder med vilket index vi vill visa upp
         self.rect = self.image.get_rect(midbottom=(x_pos, y_pos))  # rektangeln har ett random x värde och ett y värde
 
@@ -118,7 +126,7 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
         elif self.type == "stone":
             # print(f"rect - y: {self.rect.y}")
             # print(f"rect - x: {self.rect.x}")
-            # print(f"size: {self.image.get_size()}")  
+            # print(f"size: {self.image.get_size()}")
             self.rect.y += 3
         self.destroy()  # kolla om vi är utanför skärmen - DESTROY
 
@@ -248,8 +256,7 @@ def play_runner():
     pygame.time.Clock()
     game_active = False  # variabeln för att kolla om game ska köra
     start_time = 0  # variabel att spara senast tiden
-    
-    
+
     # Sound
     bg_sound_game = pygame.mixer.Sound('Runner_folder/audio/music.mp3')
     bg_sound_lobby = pygame.mixer.Sound('Runner_folder/audio/lobby.wav')
@@ -260,9 +267,8 @@ def play_runner():
     bg_sound_death.set_volume(0.2)
     bg_sound_coin.set_volume(0.2)
     bg_sound_lobby.play()
-    
-    coins = 0
 
+    coins = 0
 
     # # # # Surface, Rektanglar & Fonts # # # #
 
@@ -286,8 +292,9 @@ def play_runner():
     forest_surface = background_list[randint(0, len(background_list) - 1)]  # Laddar in bilden Forest1.png
 
     # Groups
+    player_ = Player()
     player = pygame.sprite.GroupSingle()
-    player.add(Player())
+    player.add(player_)
 
     obstacle_group = pygame.sprite.Group()
 
@@ -295,20 +302,18 @@ def play_runner():
 
     bird_group = pygame.sprite.Group()
 
-
     # intro screen
     player_stand_rotate = 0  # Börjar att visa bilden utan någon rotation
     player_stand = pygame.image.load("Runner_folder/graphics/Player/player_stand.png").convert_alpha()  # Surface - player_stand
 
     game_name = test_font.render("Pixel runner", False, (111, 196, 169))  # Text surface - game_name
     game_name_rect = game_name.get_rect(center=(400, 50))  # text rect - game_name
-    
+
     leaderboard_surf = pygame.image.load('Runner_folder/graphics/end_screen/button_small_leaderboard.png').convert_alpha()  # Surface - leaderboard
     leaderboard_surf_rect = leaderboard_surf.get_rect(topright=(780, 20))
-    
+
     # Score
     score = 0
-
 
     # # # Obstacle_timer - Custom USEREVENT # # #
     # https://coderslegacy.com/python/pygame-userevents/
@@ -325,11 +330,10 @@ def play_runner():
 
     coin_timer = pygame.USEREVENT + 4  # Vi skapar en timer för att välja hur ofta bilden på coin skall bytas ut - detta skapar en animering
     pygame.time.set_timer(coin_timer, 4000)
-    
+
     bird_timer = pygame.USEREVENT + 5
     pygame.time.set_timer(bird_timer, 7000)
 
-    
     # # # # # GAME LOOP # # # # #
     while True:
         # Allt inuti denna while loopen uppdateras på skärmen varje sekund
@@ -338,13 +342,13 @@ def play_runner():
             if event.type == pygame.QUIT:  # Om knappen [x] klickas så gör följande:
                 pygame.quit()  # Stäng av pygame
                 exit()  # Stäng ner hela python filen
-            
+
             if game_active:
                 if event.type == obstacle_timer:  # om obstacle timer har hänt
-                    obstacle_group.add(Obstacle(choice(["fly", "snail", "dragon", "cat", "stone", "stone", "stone"])))
+                    obstacle_group.add(Obstacle(choice(["fly", "snail", "dragon", "cat", "stone", "stone", "stone"]), player_.player_x_pos()))
                 if event.type == bird_timer:
                     bird_group.add(Bird(choice(["Left", "Right"])))
-                
+
                 if event.type == coin_timer:
                     coin_group.add(Coin())
 
@@ -352,7 +356,7 @@ def play_runner():
                     if event.key == pygame.K_ESCAPE:
                         print("ESC")
                         start_game_hub()
-                        
+
             if not game_active:
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
                     if leaderboard_surf_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
@@ -360,7 +364,6 @@ def play_runner():
                         bg_sound_lobby.stop()
                         high_score('runner', screen, "test_coins", (score, coins), True)
 
-                        
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
                         game_active = True  # kör game igen
@@ -369,7 +372,7 @@ def play_runner():
                     if event.key == pygame.K_ESCAPE:
                         bg_sound_lobby.stop()
                         start_game_hub()
-                    
+
         if game_active:
             screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
             screen.blit(forest_surface, (0, 0))
@@ -379,30 +382,30 @@ def play_runner():
             # player group single
             player.draw(screen)
             player.update()
-            
+
             # Obstacle Group
             obstacle_group.draw(screen)
             obstacle_group.update()
-            
+
             # Coin Group
             coin_group.draw(screen)
             coin_group.update()
             # Bird Group
             bird_group.draw(screen)
             bird_group.update()
-            
+
             if collision_with_coin_sprite(player, coin_group, bg_sound_coin):
-                #bg_sound_coin.play(0)
+                # bg_sound_coin.play(0)
                 coins += 10
-                
+
             display_coins(screen, test_font, coins)
-            
+
             # Collision
             game_active = collision_sprite(player, obstacle_group, screen, score, bird_group, coins)
 
         if not game_active:
             screen.fill((94, 129, 162))  # fyll skärmen med färg
-            
+
             # leaderboard button
             screen.blit(leaderboard_surf, leaderboard_surf_rect)
 
@@ -416,12 +419,10 @@ def play_runner():
             if coins != 0:
                 display_coins(screen, test_font, coins)
 
-            
-            
             # End screen - Score / Message
             score_message = test_font.render(f"Score: {score}", False, (111, 196, 169))  # visar antalet score
             score_message_rect = score_message.get_rect(center=(400, 50))  # rektanglen av score + placering
-    
+
             if score == 0:  # om score är 0
                 screen.blit(game_name, game_name_rect)  # Namnet på spelet
                 game_instruction = test_font.render('Press space to play', False, (111, 196, 169))  # meddelande om score är 0
@@ -431,7 +432,6 @@ def play_runner():
 
             game_instruction_rect = game_instruction.get_rect(center=(400, 350))
             screen.blit(game_instruction, game_instruction_rect)  # lägg meddelandet att starta om spelet
-
 
         pygame.display.update()  # uppdaterar skärmen [pygame window]
         clock.tick(60)  # hur snabb program kör [60 fps]
