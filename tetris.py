@@ -170,10 +170,11 @@ def game_over(screen):
     """Show Game over screen"""
     # rita text på Teris skäm
     font1 = pygame.font.SysFont('comicsans', 65, True, False)
-    text_game_over = font1.render("Game Over", True, (255, 125, 0))
-    text_game_over1 = font1.render("Press R", True, (255, 215, 0))
-    screen.blit(text_game_over, [20, 200])
-    screen.blit(text_game_over1, [25, 265])
+    font2 = pygame.font.SysFont('comicsans', 25, True, False)
+    text_game_over = font1.render("Game Over", True, (255, 0, 0))
+    text_game_over1 = font2.render("Press R to restart", True, 'Black')
+    screen.blit(text_game_over, [35, 180])
+    screen.blit(text_game_over1, [90, 265])
 
 def draw_freeze_figures(colors, game, screen):
     """ Rita kraftnät och rita alla figur som har redan körd"""

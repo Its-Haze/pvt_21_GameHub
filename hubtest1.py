@@ -48,9 +48,11 @@ def start_game_hub():
 
     pygame.font.init()  # Behövs för att initiera fonts
 
-    menu_text = Text('Game hub', (400, 50), 'White', 40)
-    runner_text = Text('Runner', (220, 130), 'White', 40)
-    tetris_text = Text('Tetris', (580, 130), 'White', 40)
+    menu_text = Text('Game hub', (400, 50), 'Black', 40)
+    runner_text = Text('Runner', (220, 130), 'Black', 40)
+    tetris_text = Text('Tetris', (580, 130), 'Black', 40)
+
+    background_sky = pygame.image.load('Runner_folder/graphics/background/backgroundsky.png')
 
     list_of_games = []
     runner = Game(runner_text, Image('Runner_folder/graphics/medium_runner.png', (220, 200)))
@@ -63,7 +65,7 @@ def start_game_hub():
     bg_sound_hub.play()
 
     while running:
-        screen.fill((0, 103, 103))
+        screen.blit(background_sky, (0, 0))
         # Change screen to the current game
         menu_text.draw(screen)
         for game in list_of_games:
