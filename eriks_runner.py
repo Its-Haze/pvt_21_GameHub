@@ -9,9 +9,7 @@ from high_score import high_score
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        player_walk_1 = pygame.image.load('Runner_folder/graphics/player/player_walk_1.png').convert_alpha()  # surface - frames
-        player_walk_2 = pygame.image.load('Runner_folder/graphics/player/player_walk_2.png').convert_alpha()  # surface - frames
-        self.player_walk = [player_walk_1, player_walk_2]  # lista av de alla frames
+        self.player_walk = [pygame.image.load(f'Runner_folder/graphics/player/player_walk_{i}.png').convert_alpha() for i in range(1, 3)]  # lista av de alla frames
         self.player_index = 0  # start index
         self.player_jump = pygame.image.load('Runner_folder/graphics/player/jump.png').convert_alpha()  # surface - jump
 
@@ -74,54 +72,40 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
         super().__init__()  # initiera pygame.sprite.Sprite
         self.type = type
         if self.type == "fly":  # om obstacle är fly
-            fly_frame_1 = pygame.image.load("Runner_folder/graphics/Fly/Fly1.png").convert_alpha()  # Ladda bild
-            fly_frame_2 = pygame.image.load("Runner_folder/graphics/Fly/Fly2.png").convert_alpha()  # Ladda bild
-            self.frames = [fly_frame_1, fly_frame_2]  # spara alla bilder i en lista som heter self.frames
+            self.frames = [pygame.image.load(f"Runner_folder/graphics/Fly/Fly{i}.png").convert_alpha() for i in range(1, 3)]
             y_pos = 210  # start positionen - Höjden på obstacle
             x_pos = randint(800, 1100)
+            
         elif self.type == "snail":  # om obstacle är snail
-            snail_frame_1 = pygame.image.load("Runner_folder/graphics/Snail/snail1.png").convert_alpha()  # Ladda bild
-            snail_frame_2 = pygame.image.load("Runner_folder/graphics/Snail/snail2.png").convert_alpha()  # Ladda bild
-            self.frames = [snail_frame_1, snail_frame_2]  # spara alla bilder i en lista som heter self.frames
+            self.frames = [pygame.image.load(f"Runner_folder/graphics/Snail/snail{i}.png").convert_alpha() for i in range(1, 3)]
             y_pos = 300  # start positionen - Höjden på obstacle
             x_pos = randint(800, 1100)
-        elif self.type == "dragon": # om obstacle är dragon
-            dragon_frame_1 = pygame.image.load("Runner_folder/graphics/dragon/Walk1.png").convert_alpha()  # Ladda bild
-            dragon_frame_2 = pygame.image.load("Runner_folder/graphics/dragon/Walk2.png").convert_alpha()  # Ladda bild
-            dragon_frame_3 = pygame.image.load("Runner_folder/graphics/dragon/Walk3.png").convert_alpha()  # Ladda bild
-            dragon_frame_4 = pygame.image.load("Runner_folder/graphics/dragon/Walk4.png").convert_alpha()  # Ladda bild
-            dragon_frame_5 = pygame.image.load("Runner_folder/graphics/dragon/Walk5.png").convert_alpha()  # Ladda bild
-
-            # skapa en lista med alla frames i deras original storlek
-            unscaled_frames = [dragon_frame_1, dragon_frame_2, dragon_frame_3, dragon_frame_4, dragon_frame_5]
             
+        elif self.type == "dragon": # om obstacle är dragon
+            unscaled_frames = [pygame.image.load(f"Runner_folder/graphics/dragon/Walk{i}.png").convert_alpha() for i in range(1, 6)]
             # skapa en list comprehension som skalar ner alla bildernas storlek med 1,5
             self.frames = [pygame.transform.scale(i, (int(i.get_width() // 1.5), int(i.get_height() // 1.5))) for i in unscaled_frames]
-            y_pos = 300  # start positionen - Höjden på obstacle 
+            y_pos = 300  # start positionen - Höjden på obstacle
             x_pos = randint(800, 1100)
-        elif self.type == "cat":
-            cat_frame_1 = pygame.image.load("Runner_folder/graphics/cat/cat_03.png").convert_alpha()  # Ladda bild
-            cat_frame_2 = pygame.image.load("Runner_folder/graphics/cat/cat_04.png").convert_alpha()  # Ladda bild
-            cat_frame_3 = pygame.image.load("Runner_folder/graphics/cat/cat_05.png").convert_alpha()  # Ladda bild
-            unscaled_cats = [cat_frame_1, cat_frame_2, cat_frame_3]  # original storlek poå alla frames
             
+        elif self.type == "cat":
+            unscaled_cats = [pygame.image.load(f"Runner_folder/graphics/cat/cat_{i}.png").convert_alpha() for i in range(1, 4)]
             # list comprehension som minskar storleken på alla frames
             self.frames = [pygame.transform.scale(i, (int(i.get_width() // 1.2), int(i.get_height() // 1.2))) for i in unscaled_cats]
             y_pos = 300
             x_pos = randint(800, 1100)
-        elif self.type == "stone":
-            stone_frame_1 = pygame.image.load("Runner_folder/graphics/stone/stone.png").convert_alpha()
             
-            unscaled_stones = [stone_frame_1, stone_frame_1]
+        elif self.type == "stone":
+            unscaled_stones = [pygame.image.load("Runner_folder/graphics/stone/stone.png").convert_alpha() for i in range(1, 3)]
             self.frames = [pygame.transform.scale(i, (int(i.get_width() // 2), int(i.get_height() // 2))) for i in unscaled_stones]
             y_pos = -100
-            x_pos = randint(100, 700)
+            x_pos = randint(50, 750)
 
         self.animation_index = 0  # vilket index som bilden vi är på ska visa
         self.image = self.frames[self.animation_index]  # image = listan av alla bilder med vilket index vi vill visa upp
         self.rect = self.image.get_rect(midbottom=(x_pos, y_pos))  # rektangeln har ett random x värde och ett y värde
 
-    def animation_state(self):  # metod för att öka indexet så bilden ändras 
+    def animation_state(self):  # metod för att öka indexet så bilden ändras
         self.animation_index += 0.1  # öka hela tiden med 0.1
         if self.animation_index >= len(self.frames):  # kolla om indexet är större eller lika med listans storlek
             self.animation_index = 0  # sätt den tillbaka till 0
@@ -134,8 +118,8 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
         elif self.type == "stone":
             # print(f"rect - y: {self.rect.y}")
             # print(f"rect - x: {self.rect.x}")
-            # print(f"size: {self.image.get_size()}")
-            self.rect.y += 5
+            # print(f"size: {self.image.get_size()}")  
+            self.rect.y += 3
         self.destroy()  # kolla om vi är utanför skärmen - DESTROY
 
     def destroy(self):  # sprite.Sprite destroy metod
@@ -151,15 +135,8 @@ class Bird(pygame.sprite.Sprite):
     def __init__(self, angle):  # initiera klassen och lägg in en sträng vad obstacle heter
         super().__init__()  # initiera pygame.sprite.Sprite
         self.angle = angle
-        bird_frame_1 = pygame.image.load("Runner_folder/graphics/birds/bird_1.png").convert_alpha()
-        bird_frame_2 = pygame.image.load("Runner_folder/graphics/birds/bird_2.png").convert_alpha()
-        bird_frame_3 = pygame.image.load("Runner_folder/graphics/birds/bird_3.png").convert_alpha()
-        bird_frame_4 = pygame.image.load("Runner_folder/graphics/birds/bird_4.png").convert_alpha()
-        bird_frame_5 = pygame.image.load("Runner_folder/graphics/birds/bird_5.png").convert_alpha()
-        bird_frame_6 = pygame.image.load("Runner_folder/graphics/birds/bird_6.png").convert_alpha()
-        bird_frame_7 = pygame.image.load("Runner_folder/graphics/birds/bird_7.png").convert_alpha()
-        bird_frame_8 = pygame.image.load("Runner_folder/graphics/birds/bird_8.png").convert_alpha()
-        unscaled_birds = [bird_frame_1, bird_frame_2, bird_frame_3, bird_frame_4, bird_frame_5, bird_frame_6, bird_frame_7, bird_frame_8]
+        #  list comprehension, ladda in alla 8 Frames av fåglarna i deras original storlek
+        unscaled_birds = [pygame.image.load(f"Runner_folder/graphics/birds/bird_{i}.png").convert_alpha() for i in range(1, 9)]
         y_pos = 75
         down_scale = 17  # dela höjden / längden på surface med 17
         if self.angle == "Right":
@@ -195,6 +172,7 @@ class Bird(pygame.sprite.Sprite):
         elif self.angle == "Left":
             if self.rect.x >= 900:
                 self.kill()
+
 
 class Coin(pygame.sprite.Sprite):
     def __init__(self):
