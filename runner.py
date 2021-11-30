@@ -2,6 +2,9 @@ import pygame  # importera pygame packet
 from random import randint, choice
 from sys import exit  # importera function exit from modul sys
 
+from high_score import high_score
+from input_box import InputBox
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -307,6 +310,11 @@ player_rotate = 0
 text_surface = test_font.render('Astronaut runner', False, 'Black')  # Skapar text ["text", bool, "färg"]
 text_rectangle = text_surface.get_rect(midtop=(400, 50))  # Skapar rektangel som man kan styra
 score = 0
+input_box = InputBox(100, 100, 140, 32, (64, 64, 64), (96, 96, 96))
+user_id = ''
+done = False
+is_first_time = True
+game_over = False
 while True:
     # Allt inuti denna while loopen uppdateras på skärmen varje sekund
 
@@ -386,12 +394,37 @@ while True:
         coin_group.draw(screen)
         coin_group.update()
         game_active = collision_sprite()
+        game_over = True
         if collision_with_coin_sprite():
             bg_sound_coin.play(0)
             coins = coins + 1
 
     else:
         screen.fill((94, 129, 162))
+        if is_first_time:
+            text_register = test_font.render("Username", True, 'Black')
+            screen.blit(text_register, [100, 60])
+            while not done:
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit()
+
+                    user_id = input_box.handle_event(event)
+                    screen.fill((94, 129, 162))
+                    screen.blit(text_register, [100, 60])
+                    input_box.update()
+                    input_box.draw(screen)
+                    if user_id:
+                        user_id = str(user_id).lower().strip()
+                        done = True
+
+                pygame.display.flip()
+            is_first_time = False
+        if game_over:
+            high_score('runner', screen, user_id, (score, coins), False)
+            game_over = False
         instructions = [Instruction('Astronaut runner', 'Black', (400, 50)),
                         Instruction('Press space to play', 'Black', (400, 350)),
                         Instruction('Press space to play again', 'Black', (400, 350))]

@@ -1,4 +1,3 @@
-import json
 
 import pygame  # https://levelup.gitconnected.com/writing-tetris-in-python-2a16bddb5318
 import random
@@ -123,7 +122,6 @@ class Tetris:
                         self.field[i1][j] = self.field[i1 - 1][j]
         self.score += lines ** 2  # räkna score = lines^2
 
-
     def go_space(self):
         """ figur ska flytta sig ner till om det går när användare tryck på mellanslag"""
         self.bg_sound_drop.play(0)
@@ -185,8 +183,8 @@ def draw_freeze_figures(colors, game, screen):
     for i in range(game.height):
         for j in range(game.width):
             # rita kraftnät med färg Gray och börja på position Teris skäm
-            pygame.draw.rect(screen, (204, 102, 0), [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom],
-                             1)
+            pygame.draw.rect(screen, (204, 102, 0),
+                             [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom], 1)
             if game.field[i][j] > 0:
                 # rita alla figurer som har redan ligger nedan: type rect(screen, färg, x, y, width, hight)
                 pygame.draw.rect(screen, colors[game.field[i][j]],
@@ -206,7 +204,6 @@ def draw_figure(colors, game, screen):
                                      [game.x + game.zoom * (j + game.figure.x) + 1,
                                       game.y + game.zoom * (i + game.figure.y) + 1,
                                       game.zoom - 2, game.zoom - 2])
-
 
 
 def play_tetris():
@@ -241,7 +238,7 @@ def play_tetris():
     bg_sound_gameover.set_volume(0.2)
     bg_sound_background.set_volume(0.2)
     bg_sound_background.play()
-    input_box = InputBox(100, 100, 140, 32)
+    input_box = InputBox(100, 100, 140, 32, (153, 76, 0), (204, 102, 0))
     user_id = ''
     done = False
 
@@ -290,7 +287,7 @@ def play_tetris():
         back_ground_img.draw(screen)
         screen.blit(menu_surface, menu_rect)
         high_score_image = Image('Tetris_folder/high_score.png', (370, 10))
-
+        high_score_image.draw(screen)
         if game.figure is None:  # om det finns ingen figur (börja play)
             game.new_figure()  # skapa en ny figur
         counter += 1
@@ -324,6 +321,9 @@ def play_tetris():
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_DOWN:  # om användare släpa k_down så markera pressing_down = False
                         pressing_down = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if high_score_image.image_rect.collidepoint(event.pos):
+                        high_score('tetris', screen, user_id, (game.score, 0), True)
 
             else:
                 if event.type == pygame.KEYDOWN:
@@ -331,7 +331,6 @@ def play_tetris():
                         game.__init__(21, 14)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if high_score_image.image_rect.collidepoint(event.pos):
-                        is_first_time = False
                         high_score('tetris', screen, user_id, (game.score, 0), True)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -346,13 +345,12 @@ def play_tetris():
         score.draw(screen)
 
         if not game.active:
-            high_score_image.draw(screen)
+            is_first_time = False
             game_over(screen)
             if game.game_over:
                 bg_sound_gameover.play(0)
-                pygame.time.wait(2000)
-                bg_sound_background.stop()
                 high_score('tetris', screen, user_id, (game.score, 0), False)
+                bg_sound_background.stop()
 
         pygame.display.flip()
         clock.tick(fps)

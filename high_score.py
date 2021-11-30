@@ -5,13 +5,12 @@ import pygame
 
 def is_not_new_user(user_id, all_score, high_score_list, game_name):
     score, *coins = all_score
-    if game_name == 'tetris':
-        for i, score in enumerate(high_score_list, start=1):
-            if user_id == score.get('id') and score > score.get('score'):
+    total_score = score + coins[0]
+    for i, score in enumerate(high_score_list, start=1):
+        if user_id == score.get('id'):
+            if game_name == 'tetris' and score > score.get('score'):
                 return i
-    if game_name == 'runner':
-        for i, score in enumerate(high_score_list, start=1):
-            if user_id == score.get('id') and score + coins[0] > score.get('totalScore'):
+            if game_name == 'runner' and total_score > score.get('totalScore'):
                 return i
     return 0
 
@@ -120,6 +119,8 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
     data = get_data(game_name)
     list_users = data.get('users')
     back_rect = pygame.rect
+    go_back_surf_rect = pygame.rect
+    stop_view = False
     if view:
         if game_name == 'runner':
             pygame.draw.rect(screen, (94, 129, 162), (0, 0, 800, 400))
@@ -131,7 +132,7 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
             back_rect = back_surface.get_rect(topleft=(10, 5))
             screen.blit(back_surface, back_rect)
 
-        while True:
+        while not stop_view:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     # save_high_score(data)
@@ -139,29 +140,24 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
                     exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        if game_name == 'runner':
-                            play_runner()
-                        if game_name == 'tetris':
-                            play_tetris()
+                        stop_view = True
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if go_back_surf_rect.collidepoint(event.pos):
-                        if game_name == 'runner':
-                            play_runner()
+                        #if game_name == 'runner':
+                            #play_runner()
+                        stop_view = True
                     if back_rect.collidepoint(event.pos):
-                        if game_name == 'tetris':
-                            play_tetris()
+                        stop_view = True
 
             if game_name == 'runner':
                 list_total_high_score_runner(screen, list_users)
             if game_name == 'tetris':
                 list_total_high_score_tetris(screen, list_users)
             pygame.display.update()
-            clock.tick(60)
     else:
         if is_high_score(all_score, list_users, game_name):
             score, *coins = all_score
-            print(_id)
-            index = is_not_new_user(_id, list_users)
+            index = is_not_new_user(_id, all_score, list_users, game_name)
             if index:
                 if game_name == 'runner':
                     list_users[index - 1]['score'] = score
@@ -176,11 +172,6 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
             save_high_score(data, game_name)
 
 
-if __name__ == '__main__':
-    # pygame.init()
-    # pygame.display.set_caption('High Score')
-    # screen = pygame.display.set_mode((800, 400))
-    # high_score('tetris', screen, 'id1', (15, 0), True)
-    pass
+
 
 
