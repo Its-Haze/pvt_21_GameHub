@@ -1,8 +1,6 @@
 import pygame
 from sys import exit
-from eriks_runner import play_runner
-from tetris import play_tetris
-from Space_Invaders_Game.main import play_space_invaders
+from instructions_screen import show_intro_screen
 
 
 class Image:
@@ -80,15 +78,14 @@ def start_game_hub():
                 exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if tetris.image.image_rect.collidepoint(event.pos):
-                    print('Klickade på tetris')
-                    bg_sound_hub.stop()
-                    play_tetris()
                 if runner.image.image_rect.collidepoint(event.pos):
                     print('Klickade på runner')
                     bg_sound_hub.stop()
-                    play_runner()
-                    #play_space_invaders()
+                    show_intro_screen("runner")
+                if tetris.image.image_rect.collidepoint(event.pos):
+                    print('Klickade på tetris')
+                    bg_sound_hub.stop()
+                    show_intro_screen("tetris")
         pygame.display.update()
         clock.tick(60)
 
