@@ -90,8 +90,7 @@ def start_game_hub():
                     print('Klickade på tetris')
                     bg_sound_hub.stop()
                     show_intro_screen("tetris")
-                    play_runner()
-                    #play_space_invaders()
+
             if event.type == pygame.MOUSEWHEEL:
                 if event.y == 1:
                     scroll_y = min(scroll_y + 25, 0)
