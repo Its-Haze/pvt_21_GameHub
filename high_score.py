@@ -123,6 +123,9 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
     if view:
         if game_name == 'runner':
             pygame.draw.rect(screen, (94, 129, 162), (0, 0, 800, 400))
+            go_back_btn = pygame.image.load('Runner_folder/graphics/end_screen/back_button2.png').convert_alpha()
+            go_back_surf_rect = go_back_btn.get_rect(topleft=(30, 30))
+            screen.blit(go_back_btn, go_back_surf_rect)
         if game_name == 'tetris':
             back_surface = pygame.image.load('Tetris_folder/back_arrow.png').convert_alpha()
             back_rect = back_surface.get_rect(topleft=(10, 5))
@@ -141,6 +144,9 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
                         if game_name == 'tetris':
                             play_tetris()
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    if go_back_surf_rect.collidepoint(event.pos):
+                        if game_name == 'runner':
+                            play_runner()
                     if back_rect.collidepoint(event.pos):
                         if game_name == 'tetris':
                             play_tetris()

@@ -42,6 +42,10 @@ class Game:
 def start_game_hub():
     pygame.init()
     screen = pygame.display.set_mode((800, 400))
+    # Implementering av scrollning
+    intermediate_surf = pygame.surface.Surface((800, 800))
+    scroll_y = 0
+
     clock = pygame.time.Clock()
     running = True
 
@@ -64,12 +68,12 @@ def start_game_hub():
     bg_sound_hub.play()
 
     while running:
-        screen.blit(background_sky, (0, 0))
+        intermediate_surf.blit(background_sky, (0, 0))
         # Change screen to the current game
-        menu_text.draw(screen)
+        menu_text.draw(intermediate_surf)
         for game in list_of_games:
-            game.text.draw(screen)
-            game.image.draw(screen)
+            game.text.draw(intermediate_surf)
+            game.image.draw(intermediate_surf)
 
         # When user click "runner", play "runner"
         for event in pygame.event.get():
@@ -86,6 +90,14 @@ def start_game_hub():
                     print('Klickade på tetris')
                     bg_sound_hub.stop()
                     show_intro_screen("tetris")
+                    play_runner()
+                    #play_space_invaders()
+            if event.type == pygame.MOUSEWHEEL:
+                if event.y == 1:
+                    scroll_y = min(scroll_y + 25, 0)
+                elif event.y == -1:
+                    scroll_y = max(scroll_y - 25, -400)
+        screen.blit(intermediate_surf, (0, scroll_y))
         pygame.display.update()
         clock.tick(60)
 
