@@ -240,7 +240,7 @@ def play_tetris():
     bg_sound_gameover = pygame.mixer.Sound('Tetris_folder/audio/over.mp3')
     bg_sound_gameover.set_volume(0.2)
     bg_sound_background.set_volume(0.2)
-    #bg_sound_background.play()
+    bg_sound_background.play()
     input_box = InputBox(100, 100, 140, 32)
     user_id = ''
     done = False
@@ -251,8 +251,8 @@ def play_tetris():
         screen.fill('White')  # fill färg för hela skäm
         back_ground_img = Image('Tetris_folder/background.jpg', (200, 0))
         back_ground_img.draw(screen)
-        image_surface = pygame.image.load('Tetris_folder/menu.png').convert_alpha()
-        image_rect = image_surface.get_rect(topleft=(10, 5))
+        menu_surface = pygame.image.load('Tetris_folder/menu.png').convert_alpha()
+        menu_rect = menu_surface.get_rect(topleft=(10, 5))
 
         if is_first_time:
             font1 = pygame.font.SysFont('comicsans', 25, False, False)
@@ -271,7 +271,7 @@ def play_tetris():
                     user_id = input_box.handle_event(event)
                     back_ground_img = Image('Tetris_folder/background.jpg', (200, 0))
                     back_ground_img.draw(screen)
-                    screen.blit(image_surface, image_rect)
+                    screen.blit(menu_surface, menu_rect)
                     screen.blit(text_register, [100, 60])
                     input_box.update()
                     input_box.draw(screen)
@@ -280,18 +280,16 @@ def play_tetris():
                         done = True
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        if image_rect.collidepoint(event.pos):
+                        if menu_rect.collidepoint(event.pos):
                             bg_sound_background.stop()
                             start_game_hub()
 
-
                 pygame.display.flip()
-                #clock.tick(30)
+            is_first_time = False
 
         back_ground_img.draw(screen)
+        screen.blit(menu_surface, menu_rect)
         high_score_image = Image('Tetris_folder/high_score.png', (370, 10))
-
-
 
         if game.figure is None:  # om det finns ingen figur (börja play)
             game.new_figure()  # skapa en ny figur
@@ -322,22 +320,22 @@ def play_tetris():
                     if event.key == pygame.K_ESCAPE:  # k_esc för att spela om
                         bg_sound_background.stop()
                         start_game_hub()
-                    if event.key == pygame.K_r:
-                        game.__init__(20, 10)
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_DOWN:  # om användare släpa k_down så markera pressing_down = False
                         pressing_down = False
 
             else:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        game.__init__(21, 14)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if high_score_image.image_rect.collidepoint(event.pos):
                         is_first_time = False
                         high_score('tetris', screen, user_id, (game.score, 0), True)
 
-
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if image_rect.collidepoint(event.pos):
+                if menu_rect.collidepoint(event.pos):
                     bg_sound_background.stop()
                     start_game_hub()
 
@@ -350,7 +348,6 @@ def play_tetris():
         if not game.active:
             high_score_image.draw(screen)
             game_over(screen)
-            check = True
             if game.game_over:
                 bg_sound_gameover.play(0)
                 pygame.time.wait(2000)
