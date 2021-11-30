@@ -2,6 +2,14 @@ import json
 
 import pygame
 
+
+def is_not_new_user(user_id, high_score_list):
+    for i, score in enumerate(high_score_list, start=1):
+        if user_id == score.get('id'):
+            return i
+    return 0
+
+
 def is_high_score(all_score: tuple, high_score_list, game_name: str):
     score, * coins = all_score
     new_score = score + coins[0]
@@ -139,8 +147,19 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
             clock.tick(60)
     else:
         if is_high_score(all_score, list_users, game_name):
-            new_score = create_high_score(_id, all_score, game_name)
-            list_users = add_high_core(new_score, list_users, game_name)
+            score, *coins = all_score
+            print(_id)
+            index = is_not_new_user(_id, list_users)
+            if index:
+                if game_name == 'runner':
+                    list_users[index - 1]['score'] = score
+                    list_users[index - 1]['coins'] = coins[0]
+                    list_users[index - 1]['totalScore'] = score + coins[0]
+                if game_name == 'tetris':
+                    list_users[index-1]['score'] = score
+            else:
+                new_score = create_high_score(_id, all_score, game_name)
+                list_users = add_high_core(new_score, list_users, game_name)
             data["users"] = list_users
             save_high_score(data, game_name)
 

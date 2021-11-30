@@ -1,9 +1,13 @@
+import json
+
 import pygame  # https://levelup.gitconnected.com/writing-tetris-in-python-2a16bddb5318
 import random
 from sys import exit
 from high_score import high_score
 
 # alla färg av figur
+from input_box import InputBox
+
 
 class Figure:
     """Class Figure"""
@@ -175,6 +179,7 @@ def game_over(screen):
     screen.blit(text_game_over, [35, 180])
     screen.blit(text_game_over1, [90, 265])
 
+
 def draw_freeze_figures(colors, game, screen):
     """ Rita kraftnät och rita alla figur som har redan körd"""
     for i in range(game.height):
@@ -203,6 +208,7 @@ def draw_figure(colors, game, screen):
                                       game.zoom - 2, game.zoom - 2])
 
 
+
 def play_tetris():
     from hubtest1 import start_game_hub, Image, Text
     """ Function run tetris game"""
@@ -222,7 +228,7 @@ def play_tetris():
     screen = pygame.display.set_mode(size)
 
     pygame.display.set_caption("Tetris")
-
+    is_first_time = True
     clock = pygame.time.Clock()
     fps = 25
     game = Tetris(21, 14)  # skapa en Teris skäm med hight = 20, width = 10
@@ -234,18 +240,54 @@ def play_tetris():
     bg_sound_gameover = pygame.mixer.Sound('Tetris_folder/audio/over.mp3')
     bg_sound_gameover.set_volume(0.2)
     bg_sound_background.set_volume(0.2)
-    bg_sound_background.play()
+    #bg_sound_background.play()
+    input_box = InputBox(100, 100, 140, 32)
+    user_id = ''
+    done = False
 
     while True:
+
         game.game_over = False
         screen.fill('White')  # fill färg för hela skäm
         back_ground_img = Image('Tetris_folder/background.jpg', (200, 0))
         back_ground_img.draw(screen)
-        high_score_image = Image('Tetris_folder/high_score.png', (370, 10))
-
         image_surface = pygame.image.load('Tetris_folder/menu.png').convert_alpha()
         image_rect = image_surface.get_rect(topleft=(10, 5))
         screen.blit(image_surface, image_rect)
+        if is_first_time:
+            font1 = pygame.font.SysFont('comicsans', 25, False, False)
+            text_register = font1.render("Username", True, (204, 102, 0))
+            font2 = pygame.font.SysFont('comicsans', 15, False, False)
+            text_error = font2.render("Please input name", True, (102, 51, 0))
+            screen.blit(text_register, [100, 60])
+            while not done:
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        screen.blit(text_error, [100, 150])
+                        # pygame.quit()
+                        # exit()
+
+                    user_id = input_box.handle_event(event, screen)
+
+                    if user_id:
+                        user_id = str(user_id).lower().strip()
+                        done = True
+
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if image_rect.collidepoint(event.pos):
+                            bg_sound_background.stop()
+                            start_game_hub()
+
+                input_box.update()
+                input_box.draw(screen)
+                pygame.display.flip()
+                #clock.tick(30)
+
+        back_ground_img.draw(screen)
+        high_score_image = Image('Tetris_folder/high_score.png', (370, 10))
+
+
 
         if game.figure is None:  # om det finns ingen figur (börja play)
             game.new_figure()  # skapa en ny figur
@@ -286,10 +328,13 @@ def play_tetris():
             else:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if high_score_image.image_rect.collidepoint(event.pos):
-                        high_score('tetris', screen, 'id1', (15, 0), True)
+                        is_first_time = False
+                        high_score('tetris', screen, user_id, (game.score, 0), True)
+
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if image_rect.collidepoint(event.pos):
+                    bg_sound_background.stop()
                     start_game_hub()
 
         draw_freeze_figures(colors, game, screen)
@@ -306,7 +351,7 @@ def play_tetris():
                 bg_sound_gameover.play(0)
                 pygame.time.wait(2000)
                 bg_sound_background.stop()
-                high_score('tetris', screen, 'id1', (game.score, 0), False)
+                high_score('tetris', screen, user_id, (game.score, 0), False)
 
         pygame.display.flip()
         clock.tick(fps)
