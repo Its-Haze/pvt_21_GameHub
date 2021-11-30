@@ -12,12 +12,10 @@ class InputBox:
         self.txt_surface = self.font.render(text, False, self.color)
         self.active = False
 
-    def handle_event(self, event, screen):
-
+    def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             # If the user clicked on the input_box rect.
             if self.rect.collidepoint(event.pos):
-                pygame.draw.rect(screen, self.color, self.rect, 2)
                 self.active = not self.active
                 # Toggle the active variable.
             else:
@@ -31,10 +29,11 @@ class InputBox:
                     return self.text
                 elif event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
+
                 else:
                     self.text += event.unicode
                 # Re-render the text.
-                self.txt_surface = self.font.render(self.text, False, self.color)
+            self.txt_surface = self.font.render(self.text, False, self.color)
 
     def update(self):
         # Resize the box if the text is too long.

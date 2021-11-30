@@ -253,7 +253,7 @@ def play_tetris():
         back_ground_img.draw(screen)
         image_surface = pygame.image.load('Tetris_folder/menu.png').convert_alpha()
         image_rect = image_surface.get_rect(topleft=(10, 5))
-        screen.blit(image_surface, image_rect)
+
         if is_first_time:
             font1 = pygame.font.SysFont('comicsans', 25, False, False)
             text_register = font1.render("Username", True, (204, 102, 0))
@@ -265,11 +265,16 @@ def play_tetris():
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         screen.blit(text_error, [100, 150])
-                        # pygame.quit()
-                        # exit()
+                        pygame.quit()
+                        exit()
 
-                    user_id = input_box.handle_event(event, screen)
-
+                    user_id = input_box.handle_event(event)
+                    back_ground_img = Image('Tetris_folder/background.jpg', (200, 0))
+                    back_ground_img.draw(screen)
+                    screen.blit(image_surface, image_rect)
+                    screen.blit(text_register, [100, 60])
+                    input_box.update()
+                    input_box.draw(screen)
                     if user_id:
                         user_id = str(user_id).lower().strip()
                         done = True
@@ -279,8 +284,7 @@ def play_tetris():
                             bg_sound_background.stop()
                             start_game_hub()
 
-                input_box.update()
-                input_box.draw(screen)
+
                 pygame.display.flip()
                 #clock.tick(30)
 
