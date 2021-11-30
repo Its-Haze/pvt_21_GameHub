@@ -309,6 +309,9 @@ def play_runner():
     game_name = test_font.render("Pixel runner", False, (111, 196, 169))  # Text surface - game_name
     game_name_rect = game_name.get_rect(center=(400, 50))  # text rect - game_name
 
+    go_back_btn = pygame.image.load('Runner_folder/graphics/end_screen/back_button2.png').convert_alpha()
+    go_back_surf_rect = go_back_btn.get_rect(topleft=(20, 20))
+
     leaderboard_surf = pygame.image.load('Runner_folder/graphics/end_screen/button_small_leaderboard.png').convert_alpha()  # Surface - leaderboard
     leaderboard_surf_rect = leaderboard_surf.get_rect(topright=(780, 20))
 
@@ -365,6 +368,9 @@ def play_runner():
                         print("clicked the leaderboard!")
                         bg_sound_lobby.stop()
                         high_score('runner', screen, "test_coins", (score, coins), True)
+                    if go_back_surf_rect.collidepoint(event.pos):
+                        bg_sound_lobby.stop()
+                        start_game_hub()
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
@@ -410,6 +416,9 @@ def play_runner():
 
             # leaderboard button
             screen.blit(leaderboard_surf, leaderboard_surf_rect)
+
+            # Go back to game hub button
+            screen.blit(go_back_btn, go_back_surf_rect)
 
             # Player stand
             player_stand_rotate += 2  # Ökar rotationen av bilden
