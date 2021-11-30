@@ -3,10 +3,16 @@ import json
 import pygame
 
 
-def is_not_new_user(user_id, high_score_list):
-    for i, score in enumerate(high_score_list, start=1):
-        if user_id == score.get('id'):
-            return i
+def is_not_new_user(user_id, all_score, high_score_list, game_name):
+    score, *coins = all_score
+    if game_name == 'tetris':
+        for i, score in enumerate(high_score_list, start=1):
+            if user_id == score.get('id') and score > score.get('score'):
+                return i
+    if game_name == 'runner':
+        for i, score in enumerate(high_score_list, start=1):
+            if user_id == score.get('id') and score + coins[0] > score.get('totalScore'):
+                return i
     return 0
 
 
