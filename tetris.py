@@ -329,6 +329,7 @@ def play_tetris():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
                         game.__init__(21, 14)
+                        bg_sound_background.play()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if high_score_image.image_rect.collidepoint(event.pos):
                         high_score('tetris', screen, user_id, (game.score, 0), True)
