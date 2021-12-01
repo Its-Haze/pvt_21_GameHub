@@ -37,7 +37,7 @@ def get_data(game_name: str):
 
     try:
         if game_name == 'runner':
-            with open('high_score.json', 'r') as f:
+            with open('high_score_runner.json', 'r') as f:
                 high_score_list = json.loads(f.read())
         if game_name == 'tetris':
             with open('Tetris_folder/high_score_tetris.json', 'r') as f:
@@ -49,7 +49,7 @@ def get_data(game_name: str):
 
 def save_high_score(data: dict, game_name: str):
     if game_name == 'runner':
-        with open('high_score.json', 'w') as f:
+        with open('high_score_runner.json', 'w') as f:
             json.dump(data, f)
     if game_name == 'tetris':
         with open('Tetris_folder/high_score_tetris.json', 'w') as f:
