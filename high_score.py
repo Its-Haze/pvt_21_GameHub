@@ -4,6 +4,7 @@ import pygame
 
 
 def is_not_new_user(user_id, all_score, high_score_list, game_name):
+    """ Return index of user in list if user exit"""
     score, *coins = all_score
     total_score = score + coins[0]
     for i, score in enumerate(high_score_list, start=1):
@@ -16,6 +17,7 @@ def is_not_new_user(user_id, all_score, high_score_list, game_name):
 
 
 def is_high_score(all_score: tuple, high_score_list, game_name: str):
+    """Return True if new score is a high score"""
     score, * coins = all_score
     new_score = score + coins[0]
     if not new_score:
@@ -101,6 +103,7 @@ def list_total_high_score_runner(screen, high_score_list: list):
 
 
 def list_total_high_score_tetris(screen, high_score_list: list):
+    """ List all high score of tetris game"""
     draw_text(screen, 'High Score', (153, 0, 0), (200, 50))
     draw_text(screen, 'User Id', (204, 102, 0), (120, 100))
     draw_text(screen, 'Score', (204, 102, 0), (270, 100))
@@ -113,6 +116,7 @@ def list_total_high_score_tetris(screen, high_score_list: list):
 
 
 def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
+    """ High score funtion"""
     from tetris import play_tetris
     from eriks_runner import play_runner
     clock = pygame.time.Clock()

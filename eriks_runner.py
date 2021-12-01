@@ -360,7 +360,6 @@ def play_runner():
                         print("ESC")
                         bg_sound_lobby.stop()
                         start_game_hub()
-                        
 
             if not game_active:
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen

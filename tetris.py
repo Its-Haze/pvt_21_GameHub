@@ -62,7 +62,7 @@ class Tetris:
     block_list: list
 
     def __init__(self, height, width):
-        self.figure = Figure(5, 0)
+        self.figure = Figure(3, 0)
         """ Skapa en teris """
         self.height = height  # hög av Teris skäm
         self.width = width  # lengd av Teris skäm
@@ -80,7 +80,7 @@ class Tetris:
         self.bg_sound_rotate.set_volume(0.2)
         self.bg_sound_line.set_volume(0.2)
         self.bg_sound_drop.set_volume(0.2)
-        self.block_list = [Figure(5, 0)]
+        self.block_list = [Figure(3, 0)]
 
         # skapa alla värde av field lika med 0
         for i in range(height):
@@ -91,7 +91,7 @@ class Tetris:
 
     def new_figure(self):
         """ Skapa en new figur"""
-        self.block_list.append(Figure(5, 0))
+        self.block_list.append(Figure(3, 0))
         self.figure = self.block_list.pop(0)
 
     def intersects(self):
@@ -198,7 +198,7 @@ def draw_freeze_figures(colors, game, screen):
 def draw_next_figure(colors, game,  _screen):
     """Rita nästa figur"""
     font = pygame.font.SysFont('comicsans', 20)
-    label = font.render('Next Shape', False, 'Black')
+    label = font.render('Next Shape', False, (204, 102, 0))
     label_rect = label.get_rect(center=(320, 85))
     _screen.blit(label, label_rect)
 
@@ -207,7 +207,7 @@ def draw_next_figure(colors, game,  _screen):
             p = i * 4 + j
             if p in game.block_list[0].image():
                 pygame.draw.rect(_screen, colors[game.block_list[0].color],
-                                 [game.x + 110 + game.zoom * (j + game.block_list[0].x) + 1,
+                                 [game.x + 150 + game.zoom * (j + game.block_list[0].x) + 1,
                                   game.y + 90 + game.zoom * (i + game.block_list[0].y) + 1,
                                   game.zoom - 2, game.zoom - 2])
 
@@ -348,7 +348,7 @@ def play_tetris():
             else:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
-                        game.__init__(21, 14)
+                        game.__init__(21, 10)
                         bg_sound_background.play()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if high_score_image.image_rect.collidepoint(event.pos):
