@@ -142,12 +142,13 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
                     if event.key == pygame.K_ESCAPE:
                         stop_view = True
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if go_back_surf_rect.collidepoint(event.pos):
-                        #if game_name == 'runner':
-                        play_runner()
-                        stop_view = True
-                    if back_rect.collidepoint(event.pos):
-                        stop_view = True
+                    if game_name == 'runner':
+                        if go_back_surf_rect.collidepoint(event.pos):
+                            # play_runner()
+                            stop_view = True
+                    if game_name == 'tetris':
+                        if back_rect.collidepoint(event.pos):
+                            stop_view = True
 
             if game_name == 'runner':
                 list_total_high_score_runner(screen, list_users)
