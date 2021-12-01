@@ -10,7 +10,7 @@ from src import classes
 
 
 def play_space_invaders():
-    from hubtest1 import start_game_hub
+    #from ..hubtest1 import start_game_hub
     pygame.init()
     resource_path = SCRIPT_DIR + '\\res\\'
 
