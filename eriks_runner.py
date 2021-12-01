@@ -61,13 +61,11 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.player_walk[0]  # om spelaren inte rör sig
 
     def player_x_pos(self):
+        print(f"rect - x: {self.rect.x}")
         return self.rect.x
 
     def update(self):
         """ Update the methods of the class """
-        print(f"rect - y: {self.rect.y}")
-        print(f"rect - x: {self.rect.x}")
-        print(f"size: {self.image.get_size()}")
         self.player_move()  # Update player_move
         self.apply_gravity()  # Update apply_gravity
         self.animation_state()  # Update animation state
@@ -225,10 +223,10 @@ def display_coins(screen, test_font, coins):
     screen.blit(coins_surf, coins_rect)
 
 
-def collision_sprite(player, obstacle_group, screen, score, bird_group, coins):
+def collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_):
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, True):
         player.empty()
-        player.add(Player())
+        player.add(player_)
         obstacle_group.empty()
         bird_group.empty()
         high_score('runner', screen, "coin_tester", (score, coins), False)
@@ -340,6 +338,7 @@ def play_runner():
 
     # # # # # GAME LOOP # # # # #
     while True:
+        player_rect_x_pos = player_.player_x_pos()
         # Allt inuti denna while loopen uppdateras på skärmen varje sekund
 
         for event in pygame.event.get():
@@ -349,7 +348,7 @@ def play_runner():
 
             if game_active:
                 if event.type == obstacle_timer:  # om obstacle timer har hänt
-                    obstacle_group.add(Obstacle(choice(["fly", "snail", "dragon", "cat", "stone", "stone", "stone"]), player_.player_x_pos()))
+                    obstacle_group.add(Obstacle(choice(["fly", "snail", "dragon", "cat", "stone", "stone", "stone"]), player_rect_x_pos))
                 if event.type == bird_timer:
                     bird_group.add(Bird(choice(["Left", "Right"])))
 
@@ -392,6 +391,7 @@ def play_runner():
             player.draw(screen)
             player.update()
 
+
             # Obstacle Group
             obstacle_group.draw(screen)
             obstacle_group.update()
@@ -410,9 +410,10 @@ def play_runner():
             display_coins(screen, test_font, coins)
 
             # Collision
-            game_active = collision_sprite(player, obstacle_group, screen, score, bird_group, coins)
+            game_active = collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_)
 
         if not game_active:
+            player_rect_x_pos = player_.player_x_pos()
             screen.fill((94, 129, 162))  # fyll skärmen med färg
 
             # leaderboard button
