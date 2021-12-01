@@ -59,6 +59,7 @@ class Tetris:
     y: int
     zoom: int  # hur stor av fyrakantan  in kraftnät och figur ska bli.
     figure: Figure
+    block_list: list
 
     def __init__(self, height, width):
         self.figure = Figure(5, 0)
@@ -79,6 +80,7 @@ class Tetris:
         self.bg_sound_rotate.set_volume(0.2)
         self.bg_sound_line.set_volume(0.2)
         self.bg_sound_drop.set_volume(0.2)
+        self.block_list = [Figure(5, 0)]
 
         # skapa alla värde av field lika med 0
         for i in range(height):
@@ -89,7 +91,8 @@ class Tetris:
 
     def new_figure(self):
         """ Skapa en new figur"""
-        self.figure = Figure(5, 0)
+        self.block_list.append(Figure(5, 0))
+        self.figure = self.block_list.pop(0)
 
     def intersects(self):
         """ kolla om figur får röra sig """
@@ -192,6 +195,23 @@ def draw_freeze_figures(colors, game, screen):
                                   game.zoom - 1])
 
 
+def draw_next_figure(colors, game,  _screen):
+    """Rita nästa figur"""
+    font = pygame.font.SysFont('comicsans', 20)
+    label = font.render('Next Shape', False, 'Black')
+    label_rect = label.get_rect(center=(320, 85))
+    _screen.blit(label, label_rect)
+
+    for i in range(4):
+        for j in range(4):
+            p = i * 4 + j
+            if p in game.block_list[0].image():
+                pygame.draw.rect(_screen, colors[game.block_list[0].color],
+                                 [game.x + 110 + game.zoom * (j + game.block_list[0].x) + 1,
+                                  game.y + 90 + game.zoom * (i + game.block_list[0].y) + 1,
+                                  game.zoom - 2, game.zoom - 2])
+
+
 def draw_figure(colors, game, screen):
     """Rita en figure"""
     if game.figure is not None:
@@ -228,7 +248,7 @@ def play_tetris():
     is_first_time = True
     clock = pygame.time.Clock()
     fps = 25
-    game = Tetris(21, 14)  # skapa en Teris skäm med hight = 20, width = 10
+    game = Tetris(21, 10)  # skapa en Teris skäm med hight = 20, width = 10
     counter = 0
 
     pressing_down = False
@@ -329,6 +349,7 @@ def play_tetris():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
                         game.__init__(21, 14)
+                        bg_sound_background.play()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if high_score_image.image_rect.collidepoint(event.pos):
                         high_score('tetris', screen, user_id, (game.score, 0), True)
@@ -340,6 +361,7 @@ def play_tetris():
 
         draw_freeze_figures(colors, game, screen)
         draw_figure(colors, game, screen)
+        draw_next_figure(colors, game, screen)
         # skapa alla text för att visa
         score = Text(f'Score: {game.score}', (200, 0), 'Yellow', 25)
         score.draw(screen)

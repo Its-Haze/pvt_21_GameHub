@@ -106,7 +106,7 @@ class Coin(pygame.sprite.Sprite):
         self.destroy()
 
     def destroy(self):
-        if self.rect.y > 300:
+        if self.rect.y > 270:
             self.kill()
 
 

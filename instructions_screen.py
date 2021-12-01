@@ -3,7 +3,11 @@ from sys import exit
 from eriks_runner import play_runner
 from tetris import play_tetris
 from Space_Invaders_Game.main import play_space_invaders
+import ctypes  # An included library with Python install.
 
+
+def Mbox(title, text, style):
+    return ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
 def show_intro_screen(game_name):
     pygame.init()
@@ -53,7 +57,19 @@ def show_intro_screen(game_name):
                         bg_sound_hub.stop()
                         play_tetris()
                 if guide_rect.collidepoint(event.pos):
-                    print("klickade på guide knappen")
+                    if game_name == "runner":
+                        print("klickade på runner guide knappen")
+                    elif game_name == "tetris":
+                        print("klickade på tetris guide knappen")
+
+                        Mbox("Tetris regler",
+                             "Tetris bygger på block som är uppbyggda av fyra rutor. Det finns sju möjliga, sammanhängande figurer som består av fyra rutor vardera. De kallas ofta för 'I', 'T', 'O', 'L', 'J', 'S' och 'Z', efter deras former. "
+                             + "Dessa block släpps mer eller mindre slumpvis ner från övre delen av ett spelfält . Medan de faller ner kan de styras i sidled, samt vridas. "
+                             + "När ett block landar på botten av spelfältet, eller på ett annat block, stannar det och nästa block släpps ner. "
+                             + "När ett block har landat så att en eller flera vågräta rader var som helst i höjdleden är helt täckta med rutor försvinner de raderna, och raderna ovanför flyttas ner. "
+                             + "Spelaren får poäng, vanligen mer ju fler rader som försvinner samtidigt. Som mest kan fyra rader försvinna genom att ett 'I'-block placeras vertikalt",
+                             0)
+
                 if back_rect.collidepoint(event.pos):
                     print("klickade på back knappen")
                     bg_sound_hub.stop()
