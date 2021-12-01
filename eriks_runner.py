@@ -244,7 +244,7 @@ def collision_with_coin_sprite(player, coin_group, bg_sound_coin):
 
 
 def play_runner():
-    from hubtest1 import start_game_hub
+    from game_hub import start_game_hub
     # # # # Aktivera Pygame # # # #
     pygame.init()  # initiera pygame biblioteket
     pygame.display.set_caption("The insane runner")

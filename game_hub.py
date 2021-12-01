@@ -4,15 +4,18 @@ from instructions_screen import show_intro_screen
 
 
 class Image:
+    """ Image class"""
     def __init__(self, image_url, pos):
         self.image_surface = pygame.image.load(image_url).convert_alpha()
         self.image_rect = self.image_surface.get_rect(midtop=pos)
 
     def draw(self, _screen):
+        """display an image in pygame screen"""
         _screen.blit(self.image_surface, self.image_rect)
 
 
 class Text:
+    """ Text class"""
     def __init__(self, text, pos, color, size):
         self.text = text
         self.color = color
@@ -21,16 +24,20 @@ class Text:
         self.text_rect = self.text_surface.get_rect(midtop=pos)
 
     def draw(self, _screen):
+        """ Display text on pygame screen"""
         _screen.blit(self.text_surface, self.text_rect)
 
     def update_text(self, text):
+        """Update text"""
         self.text_surface = self.font.render(text, False, self.color)
 
     def update_color(self, color):
+        """Update color"""
         self.text_surface = self.font.render(self.text, False, color)
 
 
 class Game:
+    """Class game"""
     text: Text
     image: Image
 
@@ -40,6 +47,7 @@ class Game:
 
 
 def start_game_hub():
+    """ Game hub function"""
     pygame.init()
     screen = pygame.display.set_mode((800, 400))
     # Implementering av scrollning

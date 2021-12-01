@@ -227,7 +227,7 @@ def draw_figure(colors, game, screen):
 
 
 def play_tetris():
-    from hubtest1 import start_game_hub, Image, Text
+    from game_hub import start_game_hub, Image, Text
     """ Function run tetris game"""
     colors = [
         (0, 0, 0),
