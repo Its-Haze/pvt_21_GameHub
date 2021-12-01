@@ -67,9 +67,9 @@ def create_high_score(user_id: str, total_score: tuple, game_name: str):
         return {"id": user_id, "score": score}
 
 
-def add_high_core(high_score, high_score_list: list, game_name: str):
+def add_high_core(score, high_score_list: list, game_name: str):
     """ add high score and return new high_score list"""
-    high_score_list.append(high_score)
+    high_score_list.append(score)
     if game_name == 'runner':
         high_score_list = sorted(high_score_list, key=lambda sc: sc['totalScore'], reverse=True)
     if game_name == 'tetris':
@@ -117,9 +117,6 @@ def list_total_high_score_tetris(screen, high_score_list: list):
 
 def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
     """ High score funtion"""
-    from tetris import play_tetris
-    from eriks_runner import play_runner
-    clock = pygame.time.Clock()
     data = get_data(game_name)
     list_users = data.get('users')
     back_rect = pygame.rect
@@ -175,8 +172,3 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
                 list_users = add_high_core(new_score, list_users, game_name)
             data["users"] = list_users
             save_high_score(data, game_name)
-
-
-
-
-
