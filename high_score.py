@@ -144,7 +144,7 @@ def high_score(game_name: str, screen, _id: str, all_score: tuple, view: bool):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if go_back_surf_rect.collidepoint(event.pos):
                         #if game_name == 'runner':
-                            #play_runner()
+                        play_runner()
                         stop_view = True
                     if back_rect.collidepoint(event.pos):
                         stop_view = True
