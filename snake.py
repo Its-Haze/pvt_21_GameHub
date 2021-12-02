@@ -204,6 +204,7 @@ class MAIN:
 
 
 def play_snake():
+    from game_hub import start_game_hub
     global cell_size, cell_number, screen, apple, game_font
     pygame.mixer.pre_init(44100, -16, 2, 512)
     pygame.init()
@@ -238,6 +239,9 @@ def play_snake():
                 if event.key == pygame.K_LEFT:
                     if main_game.snake.direction.x != 1:
                         main_game.snake.direction = Vector2(-1, 0)
+                if event.key == pygame.K_ESCAPE:
+                    pygame.mixer.stop()
+                    start_game_hub()
 
         screen.fill((175, 215, 70))
         main_game.draw_elements()
