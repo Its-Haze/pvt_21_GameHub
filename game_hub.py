@@ -44,6 +44,21 @@ class Game:
     def __init__(self, text, image):
         self.text = text
         self.image = image
+        
+        
+class Camera(object):
+    def __init__(self, camera_func, width, height):
+        self.camera_func = camera_func
+        self.state = Rect(0, 0, width, height)
+
+    def apply(self, target):
+        try:
+            return target.rect.move(self.state.topleft)
+        except AttributeError:
+            return map(sum, zip(target, self.state.topleft))
+
+    def update(self, target):
+        self.state = self.camera_func(self.state, target.rect)
 
 
 def start_game_hub():
@@ -51,14 +66,14 @@ def start_game_hub():
     pygame.init()
     screen = pygame.display.set_mode((800, 400))
     # Implementering av scrollning
-    intermediate_surf = pygame.surface.Surface((800, 800))
+    #intermediate_surf = pygame.surface.Surface((800, 800))
+    intermediate_surf = pygame.Surface((800, 800), pygame.SRCALPHA)
     scroll_y = 0
-
     clock = pygame.time.Clock()
     running = True
 
     pygame.font.init()  # Behövs för att initiera fonts
-
+    transparent_surface = pygame.image.load("transparent_surface_800_800.png").convert()
     menu_text = Text('Game hub', (400, 50), 'Black', 40)
     runner_text = Text('Runner', (220, 130), 'Black', 40)
     tetris_text = Text('Tetris', (580, 130), 'Black', 40)
@@ -74,9 +89,12 @@ def start_game_hub():
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
     bg_sound_hub.set_volume(0.2)
     bg_sound_hub.play()
-
+    #camera = Camera(complex_camera, total_level_width, total_level_height)
+    
     while running:
-        intermediate_surf.blit(background_sky, (0, 0))
+        screen.blit(background_sky, (0, 0))
+        #intermediate_surf.blit(transparent_surface, (0, 0))
+        
         # Change screen to the current game
         menu_text.draw(intermediate_surf)
         for game in list_of_games:
@@ -105,6 +123,7 @@ def start_game_hub():
                 elif event.y == -1:
                     scroll_y = max(scroll_y - 25, -400)
         screen.blit(intermediate_surf, (0, scroll_y))
+        #screen.blit(intermediate_surf, camera.apply((0,0)))
         pygame.display.update()
         clock.tick(60)
 
