@@ -71,7 +71,7 @@ class Tetris:
         self.active = True  # status
         self.x = 60
         self.y = 38
-        self.level = 1.5
+        self.level = 1.25
         self.zoom = 20
         self.game_over = False
         self.bg_sound_rotate = pygame.mixer.Sound('Tetris_folder/audio/rotate.mp3')
@@ -251,6 +251,10 @@ def play_tetris():
     game = Tetris(21, 10)  # skapa en Teris skäm med hight = 20, width = 10
     counter = 0
 
+    # Värden som bestämmer hur snabbt klossen skall röra sig åt sidan vid nedtryckta piltagnenter
+    key_delay = 250
+    key_interval = 100
+
     pressing_down = False
 
     bg_sound_background = pygame.mixer.Sound('Tetris_folder/audio/background.mp3')
@@ -329,8 +333,10 @@ def play_tetris():
                     if event.key == pygame.K_DOWN:  # k_down för att gå ner (markera pressing_down = True
                         pressing_down = True
                     if event.key == pygame.K_LEFT:  # k_left för att gå till vänster
+                        pygame.key.set_repeat(key_delay, key_interval) # Körs medans man håller nere vänsterpilen
                         game.go_side(-1)
                     if event.key == pygame.K_RIGHT:  # k_right för att gå till höger
+                        pygame.key.set_repeat(key_delay, key_interval) # Körs medans man håller nere högerpilen
                         game.go_side(1)
                     if event.key == pygame.K_SPACE:  # k_space för att gå längst ner
                         game.go_space()
