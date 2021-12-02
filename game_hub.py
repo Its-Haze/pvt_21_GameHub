@@ -49,7 +49,7 @@ class Game:
 def start_game_hub():
     """ Game hub function"""
     pygame.init()
-    screen = pygame.display.set_mode((800, 400))
+    screen = pygame.display.set_mode((800, 650))
     # Implementering av scrollning
 
     intermediate_surf = pygame.Surface((800, 800), pygame.SRCALPHA)
@@ -58,18 +58,22 @@ def start_game_hub():
     running = True
 
     pygame.font.init()  # Behövs för att initiera fonts
-    menu_text = Text('Game hub', (400, 50), 'Black', 40)
-    runner_text = Text('Runner', (220, 130), 'Black', 40)
-    tetris_text = Text('Tetris', (580, 130), 'Black', 40)
+    menu_text = Text('Game hub', (400, 20), 'Black', 40)
+    runner_text = Text('Runner', (220, 90), 'Black', 40)
+    tetris_text = Text('Tetris', (580, 90), 'Black', 40)
+    snake_text = Text('Snake Game', (220, 350), 'Black', 40)
+
 
     background_sky = pygame.image.load('Runner_folder/graphics/background/backgroundsky.png')
 
     list_of_games = []
 
-    runner = Game(runner_text, Image('Runner_folder/graphics/medium_runner.png', (220, 200)))
-    tetris = Game(tetris_text, Image('Tetris_folder/medium_tetris.png', (580, 200)))
+    runner = Game(runner_text, Image('Runner_folder/graphics/medium_runner.png', (220, 160)))
+    tetris = Game(tetris_text, Image('Tetris_folder/medium_tetris.png', (580, 160)))
+    snake = Game(snake_text, Image('Snake_folder/snake.png', (220, 420)))
     list_of_games.append(runner)
     list_of_games.append(tetris)
+    list_of_games.append(snake)
 
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
     bg_sound_hub.set_volume(0.2)
@@ -108,7 +112,10 @@ def start_game_hub():
                     print('Klickade på tetris')
                     bg_sound_hub.stop()
                     show_intro_screen("tetris")
-
+                if snake.image.image_rect.collidepoint(event.pos):
+                    print('Klickade på snake')
+                    bg_sound_hub.stop()
+                    show_intro_screen("snake")
         screen.blit(intermediate_surf, (0, scroll_y))
 
         pygame.display.update()

@@ -2,6 +2,7 @@ import pygame
 from sys import exit
 from eriks_runner import play_runner
 from tetris import play_tetris
+from snake import play_snake
 import ctypes  # An included library with Python install.
 
 
@@ -57,6 +58,10 @@ def show_intro_screen(game_name):
                         print(f'Klickade på {game_name}')
                         bg_sound_hub.stop()
                         play_tetris()
+                    elif game_name == "snake":
+                        print(f'Klickade på {game_name}')
+                        bg_sound_hub.stop()
+                        play_snake()
                 if guide_rect.collidepoint(event.pos):
                     if game_name == "runner":
                         print("klickade på runner guide knappen")
@@ -113,4 +118,4 @@ def show_intro_screen(game_name):
 
 
 if __name__ == '__main__':
-    show_intro_screen("runner")
+    show_intro_screen()
