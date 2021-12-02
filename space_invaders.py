@@ -20,7 +20,7 @@ def play_space_invaders():
     mixer.music.set_volume(0.05)
 
     # Title and Icon
-    pygame.display.set_caption("Space Invaders 1.0")
+    pygame.display.set_caption("Space Invaders")
     icon = pygame.image.load(resource_path + 'ufo_icon.png')
     pygame.display.set_icon(icon)
 
@@ -69,6 +69,7 @@ def play_space_invaders():
                     if player.bullet_state == 'ready':
                         bullet_sound = mixer.Sound(resource_path + 'shot.wav')
                         bullet_sound.play()
+                        bullet_sound.set_volume(0.05)
                         player.bullet.X = player.X
                         player.fire(player.bullet.X, player.bullet.Y, screen)
                 if event.key == pygame.K_ESCAPE:
@@ -96,6 +97,8 @@ def play_space_invaders():
             if collision:
                 explosion_sound = mixer.Sound(resource_path + 'explosion.wav')
                 explosion_sound.play()
+                explosion_sound.set_volume(0.05)
+                
                 player.bullet.Y = 480
                 player.bullet_state = 'ready'
                 score_val += 1
