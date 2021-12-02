@@ -62,18 +62,17 @@ def start_game_hub():
     runner_text = Text('Runner', (220, 90), 'Black', 40)
     tetris_text = Text('Tetris', (580, 90), 'Black', 40)
     snake_text = Text('Snake Game', (220, 350), 'Black', 40)
-
+    space_invaders_text = Text('Space invaders', (580, 350), 'Black', 40)
 
     background_sky = pygame.image.load('Runner_folder/graphics/background/backgroundsky.png')
-
-    list_of_games = []
 
     runner = Game(runner_text, Image('Runner_folder/graphics/medium_runner.png', (220, 160)))
     tetris = Game(tetris_text, Image('Tetris_folder/medium_tetris.png', (580, 160)))
     snake = Game(snake_text, Image('Snake_folder/snake.png', (220, 420)))
-    list_of_games.append(runner)
-    list_of_games.append(tetris)
-    list_of_games.append(snake)
+    space_invaders = Game(space_invaders_text, Image("Space_Invaders_folder/space_invaders_picture.png", (580, 420)))
+
+    _list_of_games = [runner, tetris, snake, space_invaders]
+    list_of_games = [i for i in _list_of_games]
 
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
     bg_sound_hub.set_volume(0.2)
@@ -116,6 +115,10 @@ def start_game_hub():
                     print('Klickade på snake')
                     bg_sound_hub.stop()
                     show_intro_screen("snake")
+                if space_invaders.image.image_rect.collidepoint(event.pos):
+                    print('Klickade på space invaders')
+                    bg_sound_hub.stop()
+                    show_intro_screen("space invaders")
         screen.blit(intermediate_surf, (0, scroll_y))
 
         pygame.display.update()
