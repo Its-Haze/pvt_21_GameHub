@@ -139,4 +139,4 @@ def show_intro_screen(game_name):
 
 
 if __name__ == '__main__':
-    show_intro_screen("runner")
+    show_intro_screen()
