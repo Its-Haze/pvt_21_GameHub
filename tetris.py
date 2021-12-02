@@ -117,7 +117,8 @@ class Tetris:
                 if self.field[i][j] == 0:  # kolla om field[i][j] int har fyllt
                     zeros += 1
             if zeros == 0:  # om hel råden är fylld, då tar det bort råden
-                self.bg_sound_line.play(0)
+                self.bg_sound_line.play()
+                self.bg_sound_line.set_volume(0.1)
                 lines += 1
                 # ta det bort raden
                 for i1 in range(i, 1, -1):
@@ -127,7 +128,8 @@ class Tetris:
 
     def go_space(self):
         """ figur ska flytta sig ner till om det går när användare tryck på mellanslag"""
-        self.bg_sound_drop.play(0)
+        self.bg_sound_drop.play()
+        self.bg_sound_drop.set_volume(0.1)
         while not self.intersects():  # loop till det går
             self.figure.y += 1
         self.figure.y -= 1
@@ -164,6 +166,7 @@ class Tetris:
     def rotate(self):
         """rotera figure"""
         self.bg_sound_rotate.play(0)
+        self.bg_sound_rotate.set_volume(0.1)
         old_rotation = self.figure.rotation  # spara rotation innan flytt
         self.figure.rotate()  # rotera figure
         if self.intersects():  # om det blir genomskärs, rotera inte
@@ -259,8 +262,8 @@ def play_tetris():
 
     bg_sound_background = pygame.mixer.Sound('Tetris_folder/audio/background.mp3')
     bg_sound_gameover = pygame.mixer.Sound('Tetris_folder/audio/over.mp3')
-    bg_sound_gameover.set_volume(0.2)
-    bg_sound_background.set_volume(0.2)
+    bg_sound_gameover.set_volume(0.1)
+    bg_sound_background.set_volume(0.1)
     bg_sound_background.play(-1)
     input_box = InputBox(100, 100, 140, 32, (153, 76, 0), (204, 102, 0))
     user_id = ''
@@ -281,13 +284,17 @@ def play_tetris():
             font2 = pygame.font.SysFont('comicsans', 15, False, False)
             text_error = font2.render("Please input name", True, (102, 51, 0))
             screen.blit(text_register, [100, 60])
+            
             while not done:
-
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         screen.blit(text_error, [100, 150])
                         pygame.quit()
                         exit()
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:  # k_esc för att spela om
+                            bg_sound_background.stop()
+                            start_game_hub()
 
                     user_id = input_box.handle_event(event)
                     back_ground_img = Image('Tetris_folder/background.jpg', (200, 0))
@@ -356,6 +363,10 @@ def play_tetris():
                     if event.key == pygame.K_r:
                         game.__init__(21, 10)
                         bg_sound_background.play()
+                        bg_sound_background.set_volume(0.1)
+                    if event.key == pygame.K_ESCAPE:  # k_esc för att spela om
+                        bg_sound_background.stop()
+                        start_game_hub()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if high_score_image.image_rect.collidepoint(event.pos):
                         high_score('tetris', screen, user_id, (game.score, 0), True)
@@ -377,6 +388,7 @@ def play_tetris():
             game_over(screen)
             if game.game_over:
                 bg_sound_gameover.play(0)
+                bg_sound_gameover.set_volume(0.1)
                 high_score('tetris', screen, user_id, (game.score, 0), False)
                 bg_sound_background.stop()
 
