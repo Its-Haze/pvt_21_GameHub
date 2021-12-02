@@ -261,7 +261,7 @@ def play_tetris():
     bg_sound_gameover = pygame.mixer.Sound('Tetris_folder/audio/over.mp3')
     bg_sound_gameover.set_volume(0.2)
     bg_sound_background.set_volume(0.2)
-    bg_sound_background.play()
+    bg_sound_background.play(-1)
     input_box = InputBox(100, 100, 140, 32, (153, 76, 0), (204, 102, 0))
     user_id = ''
     done = False
