@@ -120,11 +120,11 @@ def show_intro_screen(game_name):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_rect.collidepoint(event.pos):
-                    if game_name == "runner":
+                    if game_name == "runner" and not user_press_guide:
                         print(f'Klickade på {game_name}')
                         bg_sound_hub.stop()
                         play_runner()
-                    elif game_name == "tetris":
+                    elif game_name == "tetris" and not user_press_guide:
                         print(f'Klickade på {game_name}')
                         bg_sound_hub.stop()
                         play_tetris()
@@ -137,7 +137,7 @@ def show_intro_screen(game_name):
                         bg_sound_hub.stop()
                         play_space_invaders()
                 if guide_rect.collidepoint(event.pos):
-                    if game_name == "runner":
+                    if game_name == "runner" and not user_press_guide:
                         print("klickade på runner guide knappen")
                         user_press_guide = True
                         
@@ -145,12 +145,12 @@ def show_intro_screen(game_name):
                         print("klickade på space invaders guide knappen")
                     elif game_name == "snake":
                         print("klickade på snake guide knappen")
-                    elif game_name == "tetris":
+                    elif game_name == "tetris" and not user_press_guide:
                         print("klickade på tetris guide knappen")
                         user_press_guide = True
                         
                 if tetris_about_rect.collidepoint(event.pos):
-                    if game_name == "tetris":
+                    if game_name == "tetris" and not user_press_guide:
                         Mbox("Tetris regler",
                                 "Tetris bygger på block som är uppbyggda av fyra rutor. Det finns sju möjliga, sammanhängande figurer som består av fyra rutor vardera. De kallas ofta för 'I', 'T', 'O', 'L', 'J', 'S' och 'Z', efter deras former. "
                                 + "Dessa block släpps mer eller mindre slumpvis ner från övre delen av ett spelfält . Medan de faller ner kan de styras i sidled, samt vridas. "
@@ -160,9 +160,10 @@ def show_intro_screen(game_name):
                                 0)
 
                 if back_rect.collidepoint(event.pos):
-                    print("klickade på back knappen")
-                    bg_sound_hub.stop()
-                    start_game_hub()
+                    if not user_press_guide:
+                        print("klickade på back knappen")
+                        bg_sound_hub.stop()
+                        start_game_hub()
 
         if running:
             screen.fill("black")
