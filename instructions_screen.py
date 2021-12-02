@@ -3,6 +3,7 @@ from sys import exit
 from eriks_runner import play_runner
 from tetris import play_tetris
 from snake import play_snake
+from space_invaders import play_space_invaders
 import ctypes  # An included library with Python install.
 
 
@@ -35,6 +36,11 @@ def show_intro_screen(game_name):
     back_surface = pygame.image.load(
         "Instructions_folder/menu_buttons/back_button_text.png").convert_alpha()
     back_rect = back_surface.get_rect(midtop=(400, 400))
+    
+    
+    runner_guide_surface = pygame.image.load("Runner_folder/graphics/runner_guide.png").convert_alpha()
+    runner_guide_rect = runner_guide_surface.get_rect(topleft=(0, 0))
+    user_press_guide = False
 
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
     bg_sound_hub.set_volume(0.2)
@@ -47,6 +53,9 @@ def show_intro_screen(game_name):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    user_press_guide = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_rect.collidepoint(event.pos):
@@ -62,12 +71,21 @@ def show_intro_screen(game_name):
                         print(f'Klickade på {game_name}')
                         bg_sound_hub.stop()
                         play_snake()
+                    elif game_name == "space invaders":
+                        print(f'Klickade på {game_name}')
+                        bg_sound_hub.stop()
+                        play_space_invaders()
                 if guide_rect.collidepoint(event.pos):
                     if game_name == "runner":
                         print("klickade på runner guide knappen")
+                        user_press_guide = True
+                        
+                    elif game_name == "space invaders":
+                        print("klickade på space invaders guide knappen")
+                    elif game_name == "snake":
+                        print("klickade på snake guide knappen")
                     elif game_name == "tetris":
                         print("klickade på tetris guide knappen")
-
                         Mbox("Tetris regler",
                              "Tetris bygger på block som är uppbyggda av fyra rutor. Det finns sju möjliga, sammanhängande figurer som består av fyra rutor vardera. De kallas ofta för 'I', 'T', 'O', 'L', 'J', 'S' och 'Z', efter deras former. "
                              + "Dessa block släpps mer eller mindre slumpvis ner från övre delen av ett spelfält . Medan de faller ner kan de styras i sidled, samt vridas. "
@@ -83,39 +101,42 @@ def show_intro_screen(game_name):
 
         if running:
             screen.fill("black")
+            if user_press_guide:
+                screen.blit(runner_guide_surface, runner_guide_rect)
+            else:
+                # Rotation
+                # True
+                if surf_rotation_bool:
+                    surf_rotation -= 1
+                    surf_scale -= 0.01
 
-            # Rotation
-            # True
-            if surf_rotation_bool:
-                surf_rotation -= 1
-                surf_scale -= 0.01
+                if surf_rotation == -20:
+                    surf_rotation_bool = False
+                # False
+                if not surf_rotation_bool:
+                    surf_rotation += 1
+                    surf_scale += 0.01
 
-            if surf_rotation == -20:
-                surf_rotation_bool = False
-            # False
-            if not surf_rotation_bool:
-                surf_rotation += 1
-                surf_scale += 0.01
+                if surf_rotation == 20:
+                    surf_rotation_bool = True
 
-            if surf_rotation == 20:
-                surf_rotation_bool = True
+                font = pygame.font.Font("Instructions_folder/font/FFFFORWA.TTF", 10)
+                title_text = font.render(f"{game_name}", False, "white")
+                title_rotozoom_text = pygame.transform.rotozoom(
+                    title_text, surf_rotation, surf_scale)
+                title_rect = title_rotozoom_text.get_rect(midtop=(400, 20))
 
-            font = pygame.font.Font("Instructions_folder/font/FFFFORWA.TTF", 10)
-            title_text = font.render(f"{game_name}", False, "white")
-            title_rotozoom_text = pygame.transform.rotozoom(
-                title_text, surf_rotation, surf_scale)
-            title_rect = title_rotozoom_text.get_rect(midtop=(400, 20))
+                screen.blit(title_rotozoom_text, title_rect)
+                screen.blit(play_surface, play_rect)
+                screen.blit(guide_surface, guide_rect)
+                screen.blit(back_surface, back_rect)
+                
 
-            screen.blit(title_rotozoom_text, title_rect)
-            screen.blit(play_surface, play_rect)
-            screen.blit(guide_surface, guide_rect)
-            screen.blit(back_surface, back_rect)
-
-            # Change screen to the current game
+                # Change screen to the current game
 
             pygame.display.update()
             clock.tick(60)
 
 
 if __name__ == '__main__':
-    show_intro_screen()
+    show_intro_screen("runner")
