@@ -1,10 +1,54 @@
 import pygame
+from random import choice
 from sys import exit
 from eriks_runner import play_runner
 from tetris import play_tetris
 from snake import play_snake
 from space_invaders import play_space_invaders
 import ctypes  # An included library with Python install.
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, angle):  # initiera klassen och lägg in en sträng vad obstacle heter
+        super().__init__()  # initiera pygame.sprite.Sprite
+        self.angle = angle
+        #  list comprehension, ladda in alla 8 Frames av fåglarna i deras original storlek
+        player_walking_frames = [pygame.image.load(f'Runner_folder/graphics/player/player_walk_{i}.png').convert_alpha() for i in range(1, 3)]
+        y_pos = 600
+        self.up_scale = 1
+        if self.angle == "Left":
+            self.frames = [pygame.transform.scale(i, (int(i.get_width() * self.up_scale), int(i.get_height() * self.up_scale))) for i in player_walking_frames]
+            x_pos = -10
+
+        elif self.angle == "Right":
+            left_unscaled_player = [pygame.transform.flip(i, True, False) for i in player_walking_frames]
+            self.frames = [pygame.transform.scale(i, (int(i.get_width() * self.up_scale), int(i.get_height() * self.up_scale))) for i in left_unscaled_player]
+            x_pos = 810
+        self.animation_index = 0  # vilket index som bilden vi är på ska visa
+        self.image = self.frames[self.animation_index]  # image = listan av alla bilder med vilket index vi vill visa upp
+        self.rect = self.image.get_rect(midbottom=(x_pos, y_pos))  # rektangeln har ett random x värde och ett y värde
+
+    def animation_state(self):  # metod för att öka indexet så bilden ändras 
+        self.animation_index += 0.1  # öka hela tiden med 0.1
+        if self.animation_index >= len(self.frames):  # kolla om indexet är större eller lika med listans storlek
+            self.animation_index = 0  # sätt den tillbaka till 0
+        self.image = self.frames[int(self.animation_index)]  # sätt bilden till vad indexet är inuti frames listan
+
+    def update(self):  # sprite.Sprite update metod
+        self.animation_state()  # vilken animation vi ska visa
+        if self.angle == "Right":
+            self.rect.x -= 5  # flytta obstacle -5 pixlar
+        elif self.angle == "Left":
+            self.rect.x += 5  # fly
+        self.destroy()  # kolla om vi är utanför skärmen - DESTROY
+
+    def destroy(self):  # sprite.Sprite destroy metod
+        if self.angle == "Right":
+            if self.rect.x <= -100:  # om obstacle är för långt utanför skärmen
+                self.kill()  # ta bort den från obstacle gruppen
+        elif self.angle == "Left":
+            if self.rect.x >= 900:
+                self.kill()
 
 
 def Mbox(title, text, style):
@@ -15,6 +59,7 @@ def Mbox(title, text, style):
 def show_intro_screen(game_name):
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
+    pygame.display.set_caption(f"{game_name} - menu")
     surf_rotation = 0
     surf_scale = 2
 
@@ -38,13 +83,19 @@ def show_intro_screen(game_name):
     back_rect = back_surface.get_rect(midtop=(400, 400))
     
     
-    runner_guide_surface = pygame.image.load("Runner_folder/graphics/runner_guide.png").convert_alpha()
+    # runner_guide_surface = pygame.image.load("Runner_folder/graphics/runner_guide.png").convert_alpha()
+    runner_guide_surface = pygame.image.load("Runner_folder/graphics/runner_guide_2.png").convert_alpha()
     runner_guide_rect = runner_guide_surface.get_rect(topleft=(0, 0))
     user_press_guide = False
 
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
     bg_sound_hub.set_volume(0.2)
     bg_sound_hub.play()
+    
+    
+    player_group = pygame.sprite.Group()
+    player_walk_timer = pygame.USEREVENT + 1
+    pygame.time.set_timer(player_walk_timer, 2000)
 
     while running:
         from game_hub import start_game_hub
@@ -56,6 +107,9 @@ def show_intro_screen(game_name):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     user_press_guide = False
+
+            if event.type == player_walk_timer:
+                player_group.add(Player(choice(["Left", "Right"])))
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_rect.collidepoint(event.pos):
@@ -106,6 +160,10 @@ def show_intro_screen(game_name):
             else:
                 # Rotation
                 # True
+                if game_name == "runner":
+                    player_group.draw(screen)
+                    player_group.update()
+                
                 if surf_rotation_bool:
                     surf_rotation -= 1
                     surf_scale -= 0.01
@@ -139,4 +197,4 @@ def show_intro_screen(game_name):
 
 
 if __name__ == '__main__':
-    show_intro_screen()
+    show_intro_screen("runner")
