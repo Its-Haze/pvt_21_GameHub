@@ -144,7 +144,7 @@ class Bird(pygame.sprite.Sprite):
         #  list comprehension, ladda in alla 8 Frames av fåglarna i deras original storlek
         unscaled_birds = [pygame.image.load(f"Runner_folder/graphics/birds/bird_{i}.png").convert_alpha() for i in range(1, 9)]
         y_pos = 75
-        down_scale = 17  # dela höjden / längden på surface med 17
+        down_scale = 7  # dela höjden / längden på surface med 17
         if self.angle == "Right":
             self.frames = [pygame.transform.scale(i, (int(i.get_width() // down_scale), int(i.get_height() // down_scale))) for i in unscaled_birds]
             x_pos = 900
@@ -309,7 +309,7 @@ def play_runner():
 
     go_back_btn = pygame.image.load('Runner_folder/graphics/end_screen/home_button.png').convert_alpha()
     downscaled_go_back_btn = pygame.transform.scale(go_back_btn, ((go_back_btn.get_width() // 4), (go_back_btn.get_height() // 4)))
-    go_back_surf_rect = downscaled_go_back_btn.get_rect(topleft=(20, 20))
+    go_back_surf_rect = downscaled_go_back_btn.get_rect(bottomleft=(20, 380))
 
     leaderboard_surf = pygame.image.load('Runner_folder/graphics/end_screen/button_small_leaderboard.png').convert_alpha()  # Surface - leaderboard
     leaderboard_surf_rect = leaderboard_surf.get_rect(topright=(780, 20))
