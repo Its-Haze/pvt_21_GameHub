@@ -40,7 +40,7 @@ def show_intro_screen(game_name):
     bg_sound_hub.play()
 
     while running:
-        # from hubtest1 import start_game_hub
+        from game_hub import start_game_hub
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -72,10 +72,9 @@ def show_intro_screen(game_name):
                              0)
 
                 if back_rect.collidepoint(event.pos):
-                    running = False
-                    # print("klickade på back knappen")
-                    # bg_sound_hub.stop()
-                    # start_game_hub()
+                    print("klickade på back knappen")
+                    bg_sound_hub.stop()
+                    start_game_hub()
 
         if running:
             screen.fill("black")
