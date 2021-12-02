@@ -50,6 +50,7 @@ def start_game_hub():
     """ Game hub function"""
     pygame.init()
     screen = pygame.display.set_mode((800, 650))
+    pygame.display.set_caption("The Ultimate Game Hub!")
     # Implementering av scrollning
 
     intermediate_surf = pygame.Surface((800, 800), pygame.SRCALPHA)
@@ -76,7 +77,7 @@ def start_game_hub():
 
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
     bg_sound_hub.set_volume(0.2)
-    bg_sound_hub.play()
+    bg_sound_hub.play(-1)
 
 
     while running:
