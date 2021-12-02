@@ -144,7 +144,7 @@ class Bird(pygame.sprite.Sprite):
         #  list comprehension, ladda in alla 8 Frames av fåglarna i deras original storlek
         unscaled_birds = [pygame.image.load(f"Runner_folder/graphics/birds/bird_{i}.png").convert_alpha() for i in range(1, 9)]
         y_pos = 75
-        down_scale = 7  # dela höjden / längden på surface med 17
+        down_scale = 6  # dela höjden / längden på surface med 6
         if self.angle == "Right":
             self.frames = [pygame.transform.scale(i, (int(i.get_width() // down_scale), int(i.get_height() // down_scale))) for i in unscaled_birds]
             x_pos = 900
@@ -166,9 +166,9 @@ class Bird(pygame.sprite.Sprite):
     def update(self):  # sprite.Sprite update metod
         self.animation_state()  # vilken animation vi ska visa
         if self.angle == "Right":
-            self.rect.x -= 3  # flytta obstacle -3 pixlar
+            self.rect.x -= 4  # flytta obstacle -4 pixlar
         elif self.angle == "Left":
-            self.rect.x += 3  # fly
+            self.rect.x += 4  # fly
         self.destroy()  # kolla om vi är utanför skärmen - DESTROY
 
     def destroy(self):  # sprite.Sprite destroy metod
@@ -260,10 +260,10 @@ def play_runner():
     bg_sound_lobby = pygame.mixer.Sound('Runner_folder/audio/lobby.wav')
     bg_sound_death = pygame.mixer.Sound('Runner_folder/audio/death.mp3')
     bg_sound_coin = pygame.mixer.Sound('Runner_folder/audio/coin.wav')
-    bg_sound_game.set_volume(0.2)
+    bg_sound_game.set_volume(0.1)
     bg_sound_lobby.set_volume(0.05)
-    bg_sound_death.set_volume(0.2)
-    bg_sound_coin.set_volume(0.2)
+    bg_sound_death.set_volume(0.1)
+    bg_sound_coin.set_volume(0.1)
     bg_sound_lobby.play(-1)
 
     coins = 0
@@ -334,7 +334,7 @@ def play_runner():
     pygame.time.set_timer(coin_timer, 4000)
 
     bird_timer = pygame.USEREVENT + 5
-    pygame.time.set_timer(bird_timer, 7000)
+    pygame.time.set_timer(bird_timer, 6000)
 
     # # # # # GAME LOOP # # # # #
     while True:
