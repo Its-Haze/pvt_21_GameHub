@@ -76,7 +76,7 @@ def start_game_hub():
     list_of_games = [i for i in _list_of_games]
 
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
-    bg_sound_hub.set_volume(0.2)
+    bg_sound_hub.set_volume(0.1)
     bg_sound_hub.play(-1)
 
 
