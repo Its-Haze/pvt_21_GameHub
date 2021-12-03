@@ -44,10 +44,12 @@ def play_space_invaders():
     gameover_font = pygame.font.Font('freesansbold.ttf', 64)
 
     def show_gameover():
+        """Visar gameover texten"""
         gameover_text = gameover_font.render('GAME OVER', True, (255, 255, 255))
         screen.blit(gameover_text, (200, 250))
 
     def show_score(x, y):
+        """Visar score"""
         score = font.render('Score: ' + str(score_val), True, (255, 255, 255))
         screen.blit(score, (x, y))
 
