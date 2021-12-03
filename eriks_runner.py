@@ -404,7 +404,7 @@ def play_runner():
 
             if collision_with_coin_sprite(player, coin_group, bg_sound_coin):
                 # bg_sound_coin.play(0)
-                coins += 10
+                coins += 1
 
             display_coins(screen, test_font, coins)
 
