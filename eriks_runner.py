@@ -4,6 +4,7 @@ from random import randint, choice
 from high_score import high_score
 
 # https://youtu.be/AY9MnQ4x3zk?t=13381
+from input_box import InputBox
 
 
 class Player(pygame.sprite.Sprite):
@@ -219,13 +220,13 @@ def display_coins(screen, test_font, coins):
     screen.blit(coins_surf, coins_rect)
 
 
-def collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_):
+def collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_, user_id):
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, True):
         player.empty()
         player.add(player_)
         obstacle_group.empty()
         bird_group.empty()
-        high_score('runner', screen, "coin_tester", (score, coins), False)
+        high_score('runner', screen, user_id, (score, coins), False)
         return False
     else:
         return True
@@ -332,6 +333,12 @@ def play_runner():
     bird_timer = pygame.USEREVENT + 5
     pygame.time.set_timer(bird_timer, 6000)
 
+    input_box = InputBox(100, 100, 140, 32, (64, 64, 64), (96, 96, 96))
+    user_id = ''
+    done = False
+    is_first_time = True
+    game_over = False
+
     # # # # # GAME LOOP # # # # #
     while True:
         player_rect_x_pos = player_.player_x_pos()
@@ -358,10 +365,11 @@ def play_runner():
                         start_game_hub()
 
             if not game_active:
+
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
                     if leaderboard_surf_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
                         print("clicked the leaderboard!")
-                        high_score('runner', screen, "test_coins", (score, coins), True)
+                        high_score('runner', screen, user_id, (score, coins), True)
                     if go_back_surf_rect.collidepoint(event.pos):
                         bg_sound_lobby.stop()
                         start_game_hub()
@@ -376,6 +384,39 @@ def play_runner():
                         start_game_hub()
 
         if game_active:
+            if is_first_time:
+                text_register = test_font.render("Username", True, 'Black')
+                screen.blit(text_register, [100, 60])
+                while not done:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            exit()
+                        if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
+                            if leaderboard_surf_rect.collidepoint(
+                                    event.pos):  # om player_rect träffas av positionen av musen
+                                print("clicked the leaderboard!")
+                                high_score('runner', screen, user_id, (score, coins), True)
+                            if go_back_surf_rect.collidepoint(event.pos):
+                                bg_sound_lobby.stop()
+                                start_game_hub()
+
+                        user_id = input_box.handle_event(event)
+                        screen.fill((94, 129, 162))
+                        screen.blit(text_register, [100, 60])
+                        input_box.update()
+                        input_box.draw(screen)
+                        if user_id:
+                            user_id = str(user_id).lower().strip()
+                            done = True
+                    # leaderboard button
+                    screen.blit(leaderboard_surf, leaderboard_surf_rect)
+
+                    # Go back to game hub button
+                    screen.blit(downscaled_go_back_btn, go_back_surf_rect)
+                    pygame.display.flip()
+                is_first_time = False
+
             screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
             screen.blit(forest_surface, (0, 0))
             screen.blit(ground_surface, (0, 300))  # sätter marken på skärmen  - Lager 2
@@ -384,7 +425,6 @@ def play_runner():
             # player group single
             player.draw(screen)
             player.update()
-
 
             # Obstacle Group
             obstacle_group.draw(screen)
@@ -404,11 +444,12 @@ def play_runner():
             display_coins(screen, test_font, coins)
 
             # Collision
-            game_active = collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_)
+            game_active = collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_, user_id)
 
         if not game_active:
             player_rect_x_pos = player_.player_x_pos()
             screen.fill((94, 129, 162))  # fyll skärmen med färg
+
 
             # leaderboard button
             screen.blit(leaderboard_surf, leaderboard_surf_rect)
@@ -422,6 +463,8 @@ def play_runner():
             player_stand_rect = player_stand_rotozoom.get_rect(center=(400, 200))
             screen.blit(player_stand_rotozoom, player_stand_rect)  # lägg in player stand i rektangel positionen
             forest_surface = background_list[randint(0, len(background_list) - 1)]
+
+
             # coins score:
             if coins != 0:
                 display_coins(screen, test_font, coins)
