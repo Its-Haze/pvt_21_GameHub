@@ -222,8 +222,10 @@ def display_coins(screen, test_font, coins):
 
 def collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_, user_id):
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, True):
-        player.empty()
-        player.add(player_)
+        # player_.__init__()
+        player_.rect.x = 80
+        # player.empty()
+        # player.add(player_)
         obstacle_group.empty()
         bird_group.empty()
         high_score('runner', screen, user_id, (score, coins), False)
