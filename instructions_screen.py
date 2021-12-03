@@ -97,6 +97,9 @@ def show_intro_screen(game_name):
     tetris_about_surface = pygame.image.load("Tetris_folder/what_is_tetris.png").convert_alpha()
     tetris_about_rect = tetris_about_surface.get_rect(bottomleft=(25, 575))
     
+    snake_guide_surface = pygame.image.load("Snake_folder/snake_guide.png").convert_alpha()
+    snake_guide_rect = tetris_guide_surface.get_rect(topleft=(0, 0))
+    
     user_press_guide = False
 
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
@@ -123,6 +126,7 @@ def show_intro_screen(game_name):
                 player_group.add(Player(choice(["Left", "Right"])))
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                # Play Knappen
                 if play_rect.collidepoint(event.pos):
                     if game_name == "runner" and not user_press_guide:
                         print(f'Klickade på {game_name}')
@@ -140,19 +144,26 @@ def show_intro_screen(game_name):
                         print(f'Klickade på {game_name}')
                         bg_sound_hub.stop()
                         play_space_invaders()
+                        
+                # Guide knappen
                 if guide_rect.collidepoint(event.pos):
+                    
                     if game_name == "runner" and not user_press_guide:
                         print("klickade på runner guide knappen")
                         user_press_guide = True
                         
                     elif game_name == "space invaders":
                         print("klickade på space invaders guide knappen")
-                    elif game_name == "snake":
+                        
+                    elif game_name == "snake" and not user_press_guide:
                         print("klickade på snake guide knappen")
+                        user_press_guide = True
+                        
                     elif game_name == "tetris" and not user_press_guide:
                         print("klickade på tetris guide knappen")
                         user_press_guide = True
                         
+                # Tetris [What is tetris] knappen
                 if tetris_about_rect.collidepoint(event.pos):
                     if game_name == "tetris" and not user_press_guide:
                         Mbox("Tetris regler",
@@ -162,7 +173,7 @@ def show_intro_screen(game_name):
                                 + "När ett block har landat så att en eller flera vågräta rader var som helst i höjdleden är helt täckta med rutor försvinner de raderna, och raderna ovanför flyttas ner. "
                                 + "Spelaren får poäng, vanligen mer ju fler rader som försvinner samtidigt. Som mest kan fyra rader försvinna genom att ett 'I'-block placeras vertikalt",
                                 0)
-
+                # Tillbaka Knappen
                 if back_rect.collidepoint(event.pos):
                     if not user_press_guide:
                         print("klickade på back knappen")
@@ -175,14 +186,16 @@ def show_intro_screen(game_name):
                 screen.blit(runner_guide_surface, runner_guide_rect)
             elif user_press_guide and game_name == "tetris":
                 screen.blit(tetris_guide_surface, tetris_guide_rect)
-                
+            elif user_press_guide and game_name == "snake":
+                screen.blit(snake_guide_surface, tetris_guide_rect)
+
             else:
                 # Rotation
                 # True
                 if game_name == "runner":
                     player_group.draw(screen)
                     player_group.update()
-                
+
                 if surf_rotation_bool:
                     surf_rotation -= 1
                     surf_scale -= 0.01
@@ -209,7 +222,6 @@ def show_intro_screen(game_name):
                 screen.blit(back_surface, back_rect)
                 if game_name == "tetris":
                     screen.blit(tetris_about_surface, tetris_about_rect)
-                
 
                 # Change screen to the current game
 
