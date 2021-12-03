@@ -100,6 +100,9 @@ def show_intro_screen(game_name):
     snake_guide_surface = pygame.image.load("Snake_folder/snake_guide.png").convert_alpha()
     snake_guide_rect = tetris_guide_surface.get_rect(topleft=(0, 0))
     
+    space_invaders_guide_surface = pygame.image.load("Space_Invaders_folder/res/space_invaders_guide.png").convert_alpha()
+    space_invaders_guide_rect = space_invaders_guide_surface.get_rect(topleft=(0, 0))
+    
     user_press_guide = False
 
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
@@ -152,15 +155,16 @@ def show_intro_screen(game_name):
                         print("klickade på runner guide knappen")
                         user_press_guide = True
                         
-                    elif game_name == "space invaders":
-                        print("klickade på space invaders guide knappen")
+                    elif game_name == "tetris" and not user_press_guide:
+                        print("klickade på tetris guide knappen")
+                        user_press_guide = True
                         
                     elif game_name == "snake" and not user_press_guide:
                         print("klickade på snake guide knappen")
                         user_press_guide = True
                         
-                    elif game_name == "tetris" and not user_press_guide:
-                        print("klickade på tetris guide knappen")
+                    elif game_name == "space invaders" and not user_press_guide:
+                        print("klickade på space invaders guide knappen")
                         user_press_guide = True
                         
                 # Tetris [What is tetris] knappen
@@ -188,6 +192,8 @@ def show_intro_screen(game_name):
                 screen.blit(tetris_guide_surface, tetris_guide_rect)
             elif user_press_guide and game_name == "snake":
                 screen.blit(snake_guide_surface, tetris_guide_rect)
+            elif user_press_guide and game_name == "space invaders":
+                screen.blit(space_invaders_guide_surface, space_invaders_guide_rect)
 
             else:
                 # Rotation
