@@ -275,8 +275,8 @@ def play_tetris():
         screen.fill('White')  # fill färg för hela skäm
         back_ground_img = Image('Tetris_folder/background.jpg', (200, 0))
         back_ground_img.draw(screen)
-        menu_surface = pygame.image.load('Tetris_folder/menu.png').convert_alpha()
-        menu_rect = menu_surface.get_rect(topleft=(10, 5))
+        home_surface = pygame.image.load('Tetris_folder/home.png').convert_alpha()
+        home_rect = home_surface.get_rect(topleft=(10, 5))
 
         if is_first_time:
             font1 = pygame.font.SysFont('comicsans', 25, False, False)
@@ -299,7 +299,7 @@ def play_tetris():
                     user_id = input_box.handle_event(event)
                     back_ground_img = Image('Tetris_folder/background.jpg', (200, 0))
                     back_ground_img.draw(screen)
-                    screen.blit(menu_surface, menu_rect)
+                    screen.blit(home_surface, home_rect)
                     screen.blit(text_register, [100, 60])
                     input_box.update()
                     input_box.draw(screen)
@@ -308,7 +308,7 @@ def play_tetris():
                         done = True
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        if menu_rect.collidepoint(event.pos):
+                        if home_rect.collidepoint(event.pos):
                             bg_sound_background.stop()
                             start_game_hub()
 
@@ -316,7 +316,7 @@ def play_tetris():
             is_first_time = False
 
         back_ground_img.draw(screen)
-        screen.blit(menu_surface, menu_rect)
+        screen.blit(home_surface, home_rect)
         high_score_image = Image('Tetris_folder/high_score.png', (370, 10))
         high_score_image.draw(screen)
         if game.figure is None:  # om det finns ingen figur (börja play)
@@ -372,7 +372,7 @@ def play_tetris():
                         high_score('tetris', screen, user_id, (game.score, 0), True)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if menu_rect.collidepoint(event.pos):
+                if home_rect.collidepoint(event.pos):
                     bg_sound_background.stop()
                     start_game_hub()
 
