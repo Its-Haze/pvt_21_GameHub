@@ -28,13 +28,15 @@ class Player(pygame.sprite.Sprite):
         self.image = self.frames[self.animation_index]  # image = listan av alla bilder med vilket index vi vill visa upp
         self.rect = self.image.get_rect(midbottom=(x_pos, y_pos))  # rektangeln har ett random x värde och ett y värde
 
-    def animation_state(self):  # metod för att öka indexet så bilden ändras 
-        self.animation_index += 0.2  # öka hela tiden med 0.1
+    def animation_state(self):  # metod för att öka indexet så bilden ändras
+        """Animerar alla frames i listan self.frames och sätter nuvarande frame som self.image"""
+        self.animation_index += 0.1  # öka hela tiden med 0.1
         if self.animation_index >= len(self.frames):  # kolla om indexet är större eller lika med listans storlek
             self.animation_index = 0  # sätt den tillbaka till 0
         self.image = self.frames[int(self.animation_index)]  # sätt bilden till vad indexet är inuti frames listan
 
     def update(self):  # sprite.Sprite update metod
+        """uppdaterar hela tiden i game loopen"""
         self.animation_state()  # vilken animation vi ska visa
         if self.angle == "Right":
             self.rect.x -= 6  # flytta obstacle -5 pixlar
@@ -43,6 +45,7 @@ class Player(pygame.sprite.Sprite):
         self.destroy()  # kolla om vi är utanför skärmen - DESTROY
 
     def destroy(self):  # sprite.Sprite destroy metod
+        """ tar bort alla instanser av klassen om spelarens x axel har nått utanför skärmen"""
         if self.angle == "Right":
             if self.rect.x <= -100:  # om obstacle är för långt utanför skärmen
                 self.kill()  # ta bort den från obstacle gruppen
@@ -52,11 +55,12 @@ class Player(pygame.sprite.Sprite):
 
 
 def Mbox(title, text, style):
-
+    """returnerar en messagebox"""
     return ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
 
 def show_intro_screen(game_name):
+    """Funktionen som startar intro screen från game_hub filen"""
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption(f"{game_name} - menu")
@@ -96,7 +100,7 @@ def show_intro_screen(game_name):
     user_press_guide = False
 
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
-    bg_sound_hub.set_volume(0.2)
+    bg_sound_hub.set_volume(0.1)
     bg_sound_hub.play(-1)
     
     
