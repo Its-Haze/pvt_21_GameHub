@@ -313,6 +313,7 @@ def play_runner():
 
     # Score
     score = 0
+    test_timer = 0
 
     # # # Obstacle_timer - Custom USEREVENT # # #
     # https://coderslegacy.com/python/pygame-userevents/
@@ -343,6 +344,38 @@ def play_runner():
     while True:
         player_rect_x_pos = player_.player_x_pos()
         # Allt inuti denna while loopen uppdateras på skärmen varje sekund
+        if is_first_time:
+            text_register = test_font.render("Username", True, 'Black')
+            screen.blit(text_register, [100, 60])
+            while not done:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit()
+                    if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
+                        if leaderboard_surf_rect.collidepoint(
+                                event.pos):  # om player_rect träffas av positionen av musen
+                            print("clicked the leaderboard!")
+                            high_score('runner', screen, user_id, (score, coins), True)
+                        if go_back_surf_rect.collidepoint(event.pos):
+                            bg_sound_lobby.stop()
+                            start_game_hub()
+
+                    user_id = input_box.handle_event(event)
+                    screen.fill((94, 129, 162))
+                    screen.blit(text_register, [100, 60])
+                    input_box.update()
+                    input_box.draw(screen)
+                    if user_id:
+                        user_id = str(user_id).lower().strip()
+                        done = True
+                # leaderboard button
+                screen.blit(leaderboard_surf, leaderboard_surf_rect)
+
+                # Go back to game hub button
+                screen.blit(downscaled_go_back_btn, go_back_surf_rect)
+                pygame.display.flip()
+            is_first_time = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # Om knappen [x] klickas så gör följande:
@@ -378,48 +411,18 @@ def play_runner():
                     if event.key == pygame.K_SPACE:  # slå på mellanslag för att starta om game
                         game_active = True  # kör game igen
                         start_time = int(pygame.time.get_ticks() / 1000)  # spara tiden av sista gång
+                        #test_timer = int(pygame.time.get_ticks() / 1000)
                         coins = coins - coins
                     if event.key == pygame.K_ESCAPE:
                         bg_sound_lobby.stop()
                         start_game_hub()
 
         if game_active:
-            if is_first_time:
-                text_register = test_font.render("Username", True, 'Black')
-                screen.blit(text_register, [100, 60])
-                while not done:
-                    for event in pygame.event.get():
-                        if event.type == pygame.QUIT:
-                            pygame.quit()
-                            exit()
-                        if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
-                            if leaderboard_surf_rect.collidepoint(
-                                    event.pos):  # om player_rect träffas av positionen av musen
-                                print("clicked the leaderboard!")
-                                high_score('runner', screen, user_id, (score, coins), True)
-                            if go_back_surf_rect.collidepoint(event.pos):
-                                bg_sound_lobby.stop()
-                                start_game_hub()
-
-                        user_id = input_box.handle_event(event)
-                        screen.fill((94, 129, 162))
-                        screen.blit(text_register, [100, 60])
-                        input_box.update()
-                        input_box.draw(screen)
-                        if user_id:
-                            user_id = str(user_id).lower().strip()
-                            done = True
-                    # leaderboard button
-                    screen.blit(leaderboard_surf, leaderboard_surf_rect)
-
-                    # Go back to game hub button
-                    screen.blit(downscaled_go_back_btn, go_back_surf_rect)
-                    pygame.display.flip()
-                is_first_time = False
 
             screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
             screen.blit(forest_surface, (0, 0))
             screen.blit(ground_surface, (0, 300))  # sätter marken på skärmen  - Lager 2
+
             score = display_score(start_time, test_font, screen)  # Sätter retur värdet av funktionen till score
 
             # player group single
