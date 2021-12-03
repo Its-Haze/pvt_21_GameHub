@@ -28,6 +28,8 @@ class InputBox:
         if event.type == pygame.KEYDOWN:
             if self.active:
                 if event.key == pygame.K_RETURN:
+                    if len(self.text) > 10:
+                        return self.text[:10]
                     return self.text
                 elif event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]

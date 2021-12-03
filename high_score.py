@@ -105,13 +105,13 @@ def list_total_high_score_runner(screen, high_score_list: list):
 def list_total_high_score_tetris(screen, high_score_list: list):
     """ List all high score of tetris game"""
     draw_text(screen, 'High Score', (153, 0, 0), (200, 50))
-    draw_text(screen, 'User Id', (204, 102, 0), (120, 100))
-    draw_text(screen, 'Score', (204, 102, 0), (270, 100))
+    draw_text(screen, 'User Id', (204, 102, 0), (150, 100))
+    draw_text(screen, 'Score', (204, 102, 0), (300, 100))
     y = 0
     high_score_list = sorted(high_score_list, key=lambda sc: sc['score'], reverse=True)
     for score in high_score_list:
-        draw_text(screen, f'{score.get("id")}', (155, 128, 0), (120, 150 + y))
-        draw_text(screen, f'{score.get("score")}', (155, 128, 0), (270, 150 + y))
+        draw_text(screen, f'{score.get("id")}', 'Black', (150, 150 + y))
+        draw_text(screen, f'{score.get("score")}', 'Black', (300, 150 + y))
         y += 50
 
 
