@@ -54,7 +54,7 @@ def start_game_hub():
     # Implementering av scrollning
 
     intermediate_surf = pygame.Surface((800, 800), pygame.SRCALPHA)
-    scroll_y = 0
+    # scroll_y = 0
     clock = pygame.time.Clock()
     running = True
 
@@ -97,11 +97,11 @@ def start_game_hub():
                 pygame.quit()
                 exit()
 
-            if event.type == pygame.MOUSEWHEEL:
-                if event.y == 1:
-                    scroll_y = min(scroll_y + 25, 0)
-                elif event.y == -1:
-                    scroll_y = max(scroll_y - 25, -400)
+            # if event.type == pygame.MOUSEWHEEL:
+            #     if event.y == 1:
+            #         scroll_y = min(scroll_y + 25, 0)
+            #     elif event.y == -1:
+            #         scroll_y = max(scroll_y - 25, -400)
                     
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if runner.image.image_rect.collidepoint(event.pos):
@@ -120,7 +120,8 @@ def start_game_hub():
                     print('Klickade på space invaders')
                     bg_sound_hub.stop()
                     show_intro_screen("space invaders")
-        screen.blit(intermediate_surf, (0, scroll_y))
+        #screen.blit(intermediate_surf, (0, scroll_y))
+        screen.blit(intermediate_surf, (0, 0))
 
         pygame.display.update()
         clock.tick(60)
