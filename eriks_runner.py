@@ -61,7 +61,6 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.player_walk[0]  # om spelaren inte rör sig
 
     def player_x_pos(self):
-        print(f"rect - x: {self.rect.x}")
         return self.rect.x
 
     def update(self):
@@ -122,9 +121,6 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
         if self.type != "stone":
             self.rect.x -= 7  # flytta obstacle -7 pixlar
         elif self.type == "stone":
-            # print(f"rect - y: {self.rect.y}")
-            # print(f"rect - x: {self.rect.x}")
-            # print(f"size: {self.image.get_size()}")
             self.rect.y += 3
         self.destroy()  # kolla om vi är utanför skärmen - DESTROY
 
@@ -365,7 +361,6 @@ def play_runner():
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
                     if leaderboard_surf_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
                         print("clicked the leaderboard!")
-                        bg_sound_lobby.stop()
                         high_score('runner', screen, "test_coins", (score, coins), True)
                     if go_back_surf_rect.collidepoint(event.pos):
                         bg_sound_lobby.stop()
