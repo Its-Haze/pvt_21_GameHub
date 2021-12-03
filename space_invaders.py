@@ -1,18 +1,12 @@
 import pygame
-import os
 from pygame import mixer
-import sys
-
-SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
-sys.path.append(os.path.normpath(SCRIPT_DIR))
-
-from src import classes
+from Space_Invaders_folder.src import classes
 
 
 def play_space_invaders():
-    #from ..hubtest1 import start_game_hub
+    from game_hub import start_game_hub
     pygame.init()
-    resource_path = SCRIPT_DIR + '\\res\\'
+    resource_path = "Space_Invaders_folder/res/"
 
     # setting up the game window
     screen = pygame.display.set_mode((800, 600))
@@ -26,7 +20,7 @@ def play_space_invaders():
     mixer.music.set_volume(0.05)
 
     # Title and Icon
-    pygame.display.set_caption("Space Invaders 1.0")
+    pygame.display.set_caption("Space Invaders")
     icon = pygame.image.load(resource_path + 'ufo_icon.png')
     pygame.display.set_icon(icon)
 
@@ -49,16 +43,15 @@ def play_space_invaders():
     # Game Over Text
     gameover_font = pygame.font.Font('freesansbold.ttf', 64)
 
-
     def show_gameover():
+        """Visar gameover texten"""
         gameover_text = gameover_font.render('GAME OVER', True, (255, 255, 255))
         screen.blit(gameover_text, (200, 250))
 
-
     def show_score(x, y):
+        """Visar score"""
         score = font.render('Score: ' + str(score_val), True, (255, 255, 255))
         screen.blit(score, (x, y))
-
 
     # Game Loop
     running = True
@@ -78,6 +71,7 @@ def play_space_invaders():
                     if player.bullet_state == 'ready':
                         bullet_sound = mixer.Sound(resource_path + 'shot.wav')
                         bullet_sound.play()
+                        bullet_sound.set_volume(0.05)
                         player.bullet.X = player.X
                         player.fire(player.bullet.X, player.bullet.Y, screen)
                 if event.key == pygame.K_ESCAPE:
@@ -105,6 +99,8 @@ def play_space_invaders():
             if collision:
                 explosion_sound = mixer.Sound(resource_path + 'explosion.wav')
                 explosion_sound.play()
+                explosion_sound.set_volume(0.05)
+                
                 player.bullet.Y = 480
                 player.bullet_state = 'ready'
                 score_val += 1

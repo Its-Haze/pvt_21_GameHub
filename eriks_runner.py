@@ -4,6 +4,7 @@ from random import randint, choice
 from high_score import high_score
 
 # https://youtu.be/AY9MnQ4x3zk?t=13381
+from input_box import InputBox
 
 
 class Player(pygame.sprite.Sprite):
@@ -61,7 +62,6 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.player_walk[0]  # om spelaren inte rör sig
 
     def player_x_pos(self):
-        print(f"rect - x: {self.rect.x}")
         return self.rect.x
 
     def update(self):
@@ -122,9 +122,6 @@ class Obstacle(pygame.sprite.Sprite):  # Skapa en obstacle klass
         if self.type != "stone":
             self.rect.x -= 7  # flytta obstacle -7 pixlar
         elif self.type == "stone":
-            # print(f"rect - y: {self.rect.y}")
-            # print(f"rect - x: {self.rect.x}")
-            # print(f"size: {self.image.get_size()}")
             self.rect.y += 3
         self.destroy()  # kolla om vi är utanför skärmen - DESTROY
 
@@ -144,7 +141,7 @@ class Bird(pygame.sprite.Sprite):
         #  list comprehension, ladda in alla 8 Frames av fåglarna i deras original storlek
         unscaled_birds = [pygame.image.load(f"Runner_folder/graphics/birds/bird_{i}.png").convert_alpha() for i in range(1, 9)]
         y_pos = 75
-        down_scale = 17  # dela höjden / längden på surface med 17
+        down_scale = 6  # dela höjden / längden på surface med 6
         if self.angle == "Right":
             self.frames = [pygame.transform.scale(i, (int(i.get_width() // down_scale), int(i.get_height() // down_scale))) for i in unscaled_birds]
             x_pos = 900
@@ -166,9 +163,9 @@ class Bird(pygame.sprite.Sprite):
     def update(self):  # sprite.Sprite update metod
         self.animation_state()  # vilken animation vi ska visa
         if self.angle == "Right":
-            self.rect.x -= 3  # flytta obstacle -3 pixlar
+            self.rect.x -= 4  # flytta obstacle -4 pixlar
         elif self.angle == "Left":
-            self.rect.x += 3  # fly
+            self.rect.x += 4  # fly
         self.destroy()  # kolla om vi är utanför skärmen - DESTROY
 
     def destroy(self):  # sprite.Sprite destroy metod
@@ -223,13 +220,13 @@ def display_coins(screen, test_font, coins):
     screen.blit(coins_surf, coins_rect)
 
 
-def collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_):
+def collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_, user_id):
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, True):
         player.empty()
         player.add(player_)
         obstacle_group.empty()
         bird_group.empty()
-        high_score('runner', screen, "coin_tester", (score, coins), False)
+        high_score('runner', screen, user_id, (score, coins), False)
         return False
     else:
         return True
@@ -260,10 +257,10 @@ def play_runner():
     bg_sound_lobby = pygame.mixer.Sound('Runner_folder/audio/lobby.wav')
     bg_sound_death = pygame.mixer.Sound('Runner_folder/audio/death.mp3')
     bg_sound_coin = pygame.mixer.Sound('Runner_folder/audio/coin.wav')
-    bg_sound_game.set_volume(0.2)
+    bg_sound_game.set_volume(0.1)
     bg_sound_lobby.set_volume(0.05)
-    bg_sound_death.set_volume(0.2)
-    bg_sound_coin.set_volume(0.2)
+    bg_sound_death.set_volume(0.1)
+    bg_sound_coin.set_volume(0.1)
     bg_sound_lobby.play(-1)
 
     coins = 0
@@ -309,7 +306,7 @@ def play_runner():
 
     go_back_btn = pygame.image.load('Runner_folder/graphics/end_screen/home_button.png').convert_alpha()
     downscaled_go_back_btn = pygame.transform.scale(go_back_btn, ((go_back_btn.get_width() // 4), (go_back_btn.get_height() // 4)))
-    go_back_surf_rect = downscaled_go_back_btn.get_rect(topleft=(20, 20))
+    go_back_surf_rect = downscaled_go_back_btn.get_rect(bottomleft=(20, 380))
 
     leaderboard_surf = pygame.image.load('Runner_folder/graphics/end_screen/button_small_leaderboard.png').convert_alpha()  # Surface - leaderboard
     leaderboard_surf_rect = leaderboard_surf.get_rect(topright=(780, 20))
@@ -334,7 +331,13 @@ def play_runner():
     pygame.time.set_timer(coin_timer, 4000)
 
     bird_timer = pygame.USEREVENT + 5
-    pygame.time.set_timer(bird_timer, 7000)
+    pygame.time.set_timer(bird_timer, 6000)
+
+    input_box = InputBox(100, 100, 140, 32, (64, 64, 64), (96, 96, 96))
+    user_id = ''
+    done = False
+    is_first_time = True
+    game_over = False
 
     # # # # # GAME LOOP # # # # #
     while True:
@@ -362,11 +365,11 @@ def play_runner():
                         start_game_hub()
 
             if not game_active:
+
                 if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
                     if leaderboard_surf_rect.collidepoint(event.pos):  # om player_rect träffas av positionen av musen
                         print("clicked the leaderboard!")
-                        bg_sound_lobby.stop()
-                        high_score('runner', screen, "test_coins", (score, coins), True)
+                        high_score('runner', screen, user_id, (score, coins), True)
                     if go_back_surf_rect.collidepoint(event.pos):
                         bg_sound_lobby.stop()
                         start_game_hub()
@@ -381,6 +384,39 @@ def play_runner():
                         start_game_hub()
 
         if game_active:
+            if is_first_time:
+                text_register = test_font.render("Username", True, 'Black')
+                screen.blit(text_register, [100, 60])
+                while not done:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            exit()
+                        if event.type == pygame.MOUSEBUTTONDOWN:  # Klicka med musen
+                            if leaderboard_surf_rect.collidepoint(
+                                    event.pos):  # om player_rect träffas av positionen av musen
+                                print("clicked the leaderboard!")
+                                high_score('runner', screen, user_id, (score, coins), True)
+                            if go_back_surf_rect.collidepoint(event.pos):
+                                bg_sound_lobby.stop()
+                                start_game_hub()
+
+                        user_id = input_box.handle_event(event)
+                        screen.fill((94, 129, 162))
+                        screen.blit(text_register, [100, 60])
+                        input_box.update()
+                        input_box.draw(screen)
+                        if user_id:
+                            user_id = str(user_id).lower().strip()
+                            done = True
+                    # leaderboard button
+                    screen.blit(leaderboard_surf, leaderboard_surf_rect)
+
+                    # Go back to game hub button
+                    screen.blit(downscaled_go_back_btn, go_back_surf_rect)
+                    pygame.display.flip()
+                is_first_time = False
+
             screen.blit(sky_surface, (0, 0))  # sätter himlen på skärmen  - Lager 1
             screen.blit(forest_surface, (0, 0))
             screen.blit(ground_surface, (0, 300))  # sätter marken på skärmen  - Lager 2
@@ -389,7 +425,6 @@ def play_runner():
             # player group single
             player.draw(screen)
             player.update()
-
 
             # Obstacle Group
             obstacle_group.draw(screen)
@@ -409,11 +444,12 @@ def play_runner():
             display_coins(screen, test_font, coins)
 
             # Collision
-            game_active = collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_)
+            game_active = collision_sprite(player, obstacle_group, screen, score, bird_group, coins, player_, user_id)
 
         if not game_active:
             player_rect_x_pos = player_.player_x_pos()
             screen.fill((94, 129, 162))  # fyll skärmen med färg
+
 
             # leaderboard button
             screen.blit(leaderboard_surf, leaderboard_surf_rect)
@@ -427,6 +463,8 @@ def play_runner():
             player_stand_rect = player_stand_rotozoom.get_rect(center=(400, 200))
             screen.blit(player_stand_rotozoom, player_stand_rect)  # lägg in player stand i rektangel positionen
             forest_surface = background_list[randint(0, len(background_list) - 1)]
+
+
             # coins score:
             if coins != 0:
                 display_coins(screen, test_font, coins)
