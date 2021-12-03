@@ -340,10 +340,10 @@ def play_tetris():
                     if event.key == pygame.K_DOWN:  # k_down för att gå ner (markera pressing_down = True
                         pressing_down = True
                     if event.key == pygame.K_LEFT:  # k_left för att gå till vänster
-                        pygame.key.set_repeat(key_delay, key_interval) # Körs medans man håller nere vänsterpilen
+                        pygame.key.set_repeat(key_delay, key_interval)  # Körs medans man håller nere vänsterpilen
                         game.go_side(-1)
                     if event.key == pygame.K_RIGHT:  # k_right för att gå till höger
-                        pygame.key.set_repeat(key_delay, key_interval) # Körs medans man håller nere högerpilen
+                        pygame.key.set_repeat(key_delay, key_interval)  # Körs medans man håller nere högerpilen
                         game.go_side(1)
                     if event.key == pygame.K_SPACE:  # k_space för att gå längst ner
                         game.go_space()

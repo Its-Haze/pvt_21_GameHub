@@ -13,19 +13,25 @@ class Player(pygame.sprite.Sprite):
         super().__init__()  # initiera pygame.sprite.Sprite
         self.angle = angle
         #  list comprehension, ladda in alla 8 Frames av fåglarna i deras original storlek
-        player_walking_frames = [pygame.image.load(f'Runner_folder/graphics/player/player_walk_{i}.png').convert_alpha() for i in range(1, 3)]
+        player_walking_frames = [pygame.image.load(f'Runner_folder/graphics/player/player_walk_{i}.png').convert_alpha()
+                                 for i in range(1, 3)]
         y_pos = 600
+        x_pos = 0
         self.up_scale = 1.1
         if self.angle == "Left":
-            self.frames = [pygame.transform.scale(i, (int(i.get_width() * self.up_scale), int(i.get_height() * self.up_scale))) for i in player_walking_frames]
+            self.frames = [pygame.transform.scale(i, (int(i.get_width() * self.up_scale),
+                                                      int(i.get_height() * self.up_scale)))
+                           for i in player_walking_frames]
             x_pos = -10
 
         elif self.angle == "Right":
             left_unscaled_player = [pygame.transform.flip(i, True, False) for i in player_walking_frames]
-            self.frames = [pygame.transform.scale(i, (int(i.get_width() * self.up_scale), int(i.get_height() * self.up_scale))) for i in left_unscaled_player]
+            self.frames = [pygame.transform.scale(i, (int(i.get_width() * self.up_scale),
+                                                      int(i.get_height() * self.up_scale)))
+                           for i in left_unscaled_player]
             x_pos = 810
         self.animation_index = 0  # vilket index som bilden vi är på ska visa
-        self.image = self.frames[self.animation_index]  # image = listan av alla bilder med vilket index vi vill visa upp
+        self.image = self.frames[self.animation_index]  # image= listan av alla bilder med vilket index vi vill visa upp
         self.rect = self.image.get_rect(midbottom=(x_pos, y_pos))  # rektangeln har ett random x värde och ett y värde
 
     def animation_state(self):  # metod för att öka indexet så bilden ändras
@@ -54,7 +60,7 @@ class Player(pygame.sprite.Sprite):
                 self.kill()
 
 
-def Mbox(title, text, style):
+def mbox(title, text, style):
     """returnerar en messagebox"""
     return ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
@@ -85,31 +91,30 @@ def show_intro_screen(game_name):
     back_surface = pygame.image.load(
         "Instructions_folder/menu_buttons/back_button_text.png").convert_alpha()
     back_rect = back_surface.get_rect(midtop=(400, 400))
-    
-    
+
     # Guide Pictures
     runner_guide_surface = pygame.image.load("Runner_folder/graphics/runner_guide_2.png").convert_alpha()
     runner_guide_rect = runner_guide_surface.get_rect(topleft=(0, 0))
-    
+
     tetris_guide_surface = pygame.image.load("Tetris_folder/tetris_guide.png").convert_alpha()
     tetris_guide_rect = tetris_guide_surface.get_rect(topleft=(0, 0))
-    
+
     tetris_about_surface = pygame.image.load("Tetris_folder/what_is_tetris.png").convert_alpha()
     tetris_about_rect = tetris_about_surface.get_rect(bottomleft=(25, 575))
-    
+
     snake_guide_surface = pygame.image.load("Snake_folder/snake_guide.png").convert_alpha()
     snake_guide_rect = tetris_guide_surface.get_rect(topleft=(0, 0))
-    
-    space_invaders_guide_surface = pygame.image.load("Space_Invaders_folder/res/space_invaders_guide.png").convert_alpha()
+
+    space_invaders_guide_surface = pygame.image.load("Space_Invaders_folder/res/space_invaders_guide.png") \
+        .convert_alpha()
     space_invaders_guide_rect = space_invaders_guide_surface.get_rect(topleft=(0, 0))
-    
+
     user_press_guide = False
 
     bg_sound_hub = pygame.mixer.Sound('audio/hub.mp3')
     bg_sound_hub.set_volume(0.1)
     bg_sound_hub.play(-1)
-    
-    
+
     player_group = pygame.sprite.Group()
     player_walk_timer = pygame.USEREVENT + 1
     pygame.time.set_timer(player_walk_timer, 1600)
@@ -147,36 +152,43 @@ def show_intro_screen(game_name):
                         print(f'Klickade på {game_name}')
                         bg_sound_hub.stop()
                         play_space_invaders()
-                        
+
                 # Guide knappen
                 if guide_rect.collidepoint(event.pos):
-                    
+
                     if game_name == "runner" and not user_press_guide:
                         print("klickade på runner guide knappen")
                         user_press_guide = True
-                        
+
                     elif game_name == "tetris" and not user_press_guide:
                         print("klickade på tetris guide knappen")
                         user_press_guide = True
-                        
+
                     elif game_name == "snake" and not user_press_guide:
                         print("klickade på snake guide knappen")
                         user_press_guide = True
-                        
+
                     elif game_name == "space invaders" and not user_press_guide:
                         print("klickade på space invaders guide knappen")
                         user_press_guide = True
-                        
+
                 # Tetris [What is tetris] knappen
                 if tetris_about_rect.collidepoint(event.pos):
                     if game_name == "tetris" and not user_press_guide:
-                        Mbox("Tetris regler",
-                                "Tetris bygger på block som är uppbyggda av fyra rutor. Det finns sju möjliga, sammanhängande figurer som består av fyra rutor vardera. De kallas ofta för 'I', 'T', 'O', 'L', 'J', 'S' och 'Z', efter deras former. "
-                                + "Dessa block släpps mer eller mindre slumpvis ner från övre delen av ett spelfält . Medan de faller ner kan de styras i sidled, samt vridas. "
-                                + "När ett block landar på botten av spelfältet, eller på ett annat block, stannar det och nästa block släpps ner. "
-                                + "När ett block har landat så att en eller flera vågräta rader var som helst i höjdleden är helt täckta med rutor försvinner de raderna, och raderna ovanför flyttas ner. "
-                                + "Spelaren får poäng, vanligen mer ju fler rader som försvinner samtidigt. Som mest kan fyra rader försvinna genom att ett 'I'-block placeras vertikalt",
-                                0)
+                        mbox("Tetris regler",
+                             "Tetris bygger på block som är uppbyggda av fyra rutor. Det finns sju möjliga, "
+                             "sammanhängande figurer som består av fyra rutor vardera. "
+                             "De kallas ofta för 'I', 'T', 'O', 'L', 'J', 'S' och 'Z', efter deras former. "
+                             + "Dessa block släpps mer eller mindre slumpvis ner från övre delen av ett spelfält. "
+                               "Medan de faller ner kan de styras i sidled, samt vridas. "
+                             + "När ett block landar på botten av spelfältet, "
+                               "eller på ett annat block, stannar det och nästa block släpps ner. "
+                             + "När ett block har landat så att en eller flera vågräta rader var som helst i "
+                               "höjdleden är helt täckta med rutor försvinner de raderna, "
+                               "och raderna ovanför flyttas ner. "
+                             + "Spelaren får poäng, vanligen mer ju fler rader som försvinner samtidigt. "
+                               "Som mest kan fyra rader försvinna genom att ett 'I'-block placeras vertikalt",
+                             0)
                 # Tillbaka Knappen
                 if back_rect.collidepoint(event.pos):
                     if not user_press_guide:
@@ -191,7 +203,7 @@ def show_intro_screen(game_name):
             elif user_press_guide and game_name == "tetris":
                 screen.blit(tetris_guide_surface, tetris_guide_rect)
             elif user_press_guide and game_name == "snake":
-                screen.blit(snake_guide_surface, tetris_guide_rect)
+                screen.blit(snake_guide_surface, snake_guide_rect)
             elif user_press_guide and game_name == "space invaders":
                 screen.blit(space_invaders_guide_surface, space_invaders_guide_rect)
 
@@ -234,6 +246,5 @@ def show_intro_screen(game_name):
             pygame.display.update()
             clock.tick(60)
 
-
-if __name__ == '__main__':
-    show_intro_screen()
+# if __name__ == '__main__':
+#     show_intro_screen()

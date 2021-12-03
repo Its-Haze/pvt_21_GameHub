@@ -79,12 +79,9 @@ def start_game_hub():
     bg_sound_hub.set_volume(0.1)
     bg_sound_hub.play(-1)
 
-
     while running:
         screen.fill("black")
         screen.blit(background_sky, (0, 0))
-
-        
         # Change screen to the current game
         menu_text.draw(intermediate_surf)
         for game in list_of_games:
@@ -120,7 +117,7 @@ def start_game_hub():
                     print('Klickade på space invaders')
                     bg_sound_hub.stop()
                     show_intro_screen("space invaders")
-        #screen.blit(intermediate_surf, (0, scroll_y))
+        # screen.blit(intermediate_surf, (0, scroll_y))
         screen.blit(intermediate_surf, (0, 0))
 
         pygame.display.update()
